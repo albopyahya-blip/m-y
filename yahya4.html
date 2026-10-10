@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Memory Vault 👑</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --accent: #d63384;
+            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --glass: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: var(--bg-grad); overflow: hidden; padding: 15px;
+        }
+
+        /* حاوية الخزنة المطورة */
+        .vault-card {
+            width: 100%; max-width: 440px;
+            background: var(--glass); backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 35px 20px; border-radius: 40px;
+            box-shadow: 0 25px 50px rgba(255, 77, 109, 0.15);
+            border: 1px solid var(--glass-border);
+            text-align: center; z-index: 10;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-family: 'Dancing Script', cursive; color: var(--accent); font-size: 2.8rem; margin-bottom: 25px; text-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+
+        /* تنسيق الأقفال (النقاط) */
+        .progress-dots {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 10px; margin-bottom: 30px; padding: 0 10px;
+        }
+
+        .dot {
+            aspect-ratio: 1; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--glass-border);
+        }
+
+        .dot.active {
+            background: var(--primary);
+            color: white; transform: scale(1.1);
+            box-shadow: 0 0 15px var(--primary);
+            border-color: transparent;
+        }
+
+        .question-box { min-height: 140px; }
+
+        .question-text { color: #4a4a4a; font-weight: 600; margin-bottom: 20px; font-size: 1.1rem; line-height: 1.4; }
+
+        input {
+            width: 100%; padding: 16px; border-radius: 20px; border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.9); margin-bottom: 15px; text-align: center;
+            font-size: 1rem; color: #333; outline: none; transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        input:focus { border-color: var(--primary); background: white; }
+
+        .next-btn {
+            width: 100%; padding: 16px; border-radius: 20px; border: none;
+            background: var(--primary); color: white; font-weight: 700;
+            font-size: 1rem; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
+        }
+
+        .next-btn:active { transform: scale(0.96); }
+
+        /* شاشة الرسالة الملكية */
+        #reveal-screen {
+            display: none; position: fixed; top:0; left:0; width: 100%; height: 100%;
+            background: var(--bg-grad); z-index: 100;
+            justify-content: center; align-items: center; padding: 15px;
+        }
+
+        .letter-card {
+            background: rgba(255, 255, 255, 0.95); padding: 35px 20px; border-radius: 45px;
+            width: 100%; max-width: 550px; max-height: 85vh;
+            text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column;
+            border: 2px solid var(--primary);
+            animation: vaultOpen 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes vaultOpen { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .letter-card h1 { font-family: 'Dancing Script', cursive; color: var(--primary); font-size: 3.2rem; margin-bottom: 10px; }
+
+        .scroll-area {
+            overflow-y: auto; padding: 10px 15px; margin: 15px 0;
+            scrollbar-width: thin; scrollbar-color: var(--primary) transparent;
+        }
+
+        .scroll-area::-webkit-scrollbar { width: 4px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        .letter-card p { 
+            color: #444; line-height: 1.8; font-size: 1.1rem; 
+            white-space: pre-line; text-align: left; 
+        }
+
+        .back-btn {
+            display: inline-block; padding: 12px 40px; background: var(--primary);
+            color: white; text-decoration: none; border-radius: 50px; 
+            font-weight: 700; margin-top: 10px; box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        /* مؤثرات */
+        .heart { position: fixed; bottom: -50px; pointer-events: none; animation: floatUp linear forwards; z-index: 1; }
+        @keyframes floatUp { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+        .shake { animation: shake 0.4s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="vault-card" id="vault-ui">
+        <h2>Memory Vault</h2>
+        <div class="progress-dots">
+            <div class="dot" id="dot-0">🔒</div>
+            <div class="dot" id="dot-1">🔒</div>
+            <div class="dot" id="dot-2">🔒</div>
+            <div class="dot" id="dot-3">🔒</div>
+            <div class="dot" id="dot-4">🔒</div>
+            <div class="dot" id="dot-5">🔒</div>
+            <div class="dot" id="dot-6">🔒</div>
+        </div>
+
+        <div class="question-box">
+            <p class="question-text" id="q-text">Loading Question...</p>
+            <input type="text" id="ans-input" placeholder="Type answer here..." autocomplete="off">
+            <button class="next-btn" onclick="checkAnswer()">Unlock Clue 🔑</button>
+        </div>
+    </div>
+
+    <!-- شاشة الرسالة -->
+    <div id="reveal-screen">
+        <div class="letter-card">
+            <div style="font-size: 40px;">👑</div>
+            <h1>Confirmed!</h1>
+            <div class="scroll-area">
+                <p id="final-letter">
+You are indeed my Queen And if there is one thing I wish I could give you for just a moment it would be my eyes so you could finally see yourself the way I see you You would see the girl whose smile makes difficult days feel softer You would see the person whose existence alone became my favorite part of life You would finally understand why I thank God for you more times than I could ever count You came into my life so quietly yet somehow changed everything about it Before you I thought happiness was something people spent their entire lives searching for and then I met you and realized that sometimes happiness isn't a place or a dream Sometimes it is simply a person and somehow that person became you You don't know how many times I have smiled because of a memory of you or how many times I found myself whispering your name in my prayers without even realizing it Loving you stopped being something I think about a long time ago It became something my heart simply does naturally like breathing I love you in ways I don't always know how to explain I love you in the moments when we laugh together and I love you in the moments when we sit quietly saying absolutely nothing I love you on your happiest days and I promise to love you even more on the difficult ones I love every version of you including the one that doubts herself sometimes because she deserves love just as much as every other version of her I don't think you realize that you have become a part of all my tomorrows Whenever I imagine my future somehow your smile always finds its place in it I cannot dream about beautiful things anymore without finding you standing somewhere inside them You became my favorite prayer my favorite memory and my favorite dream all at once And do you know what my favorite thing about loving you is It is that no matter how much time passes I never stop discovering new reasons to fall in love with you There has never been a moment where I thought my heart had loved you enough because somehow every tomorrow teaches me that it can love you even more than it did yesterday Sometimes I wish I could pause time during our happiest moments Just to stay there a little longer listening to your laugh watching your eyes light up while you talk about something you love and reminding myself that somehow I became lucky enough to call you mine There are days when life becomes difficult and the world feels unbearably loud but then I remember that somewhere in this world there is a beautiful soul carrying my heart so gently and suddenly everything feels okay again Because home stopped being a place a very long time ago Home became wherever you are And if I could make one promise to you it would not be that I will never make mistakes because I am human and humans are imperfect My promise is that I will always choose you on the difficult days just as much as I choose you on the beautiful ones My promise is that I will never stop learning how to love you better My promise is that I will spend my lifetime protecting the smile that made me fall in love with life a little more I want to become the person whose name brings peace to your heart The person you never have to pretend around The person who celebrates your victories as if they were his own and carries your sadness as if it belonged to him too I want to become the safest chapter of your story because you have already become the most beautiful chapter of mine If one day life gives us wrinkles and gray hair I hope I am still sitting beside you laughing at the same silly jokes and falling in love with you exactly the way I am today I hope I still become nervous whenever you smile at me and I hope my heart still whispers your name in every prayer exactly as it does now People say forever is a very long time but somehow forever still doesn't feel long enough when I think about loving you I want a thousand sunsets beside you A thousand conversations that never seem to end A thousand ordinary moments that become extraordinary simply because they happened with you And if I could ask God for one thing after thanking Him for bringing you into my life I would ask Him to let me witness every beautiful dream in your heart come true I would ask Him to protect the softness of your soul and the kindness hidden inside your smile I would ask Him to make happiness fall into your hands over and over again for the rest of your life Because the truth is I have stopped asking God for things for myself a long time ago Most of my prayers somehow became about you Your peace Your happiness Your smile Your dreams and the beautiful future I hope waits patiently for us And if one day someone asks me what love looks like I don't think I would answer with words anymore I would simply point at you Because loving you has been the gentlest thing that has ever happened to my heart And if my heart could write its final sentence after a lifetime of loving you I know exactly what it would say Out of the billions of souls in this world I would still find my way back to yours every single time because my heart has only ever known one Queen and it will always be you                </p>
+            </div>
+            <a href="heart.html" class="back-btn">Back</a>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "The month we started our story?", a: ["june", "jun" ,"6"] },
+            { q: "The nickname that makes you smile?", a: ["maloktyyy","maloktyy", "malokty", "koteyy", "kotyy", "kotey", "koty", "koteyyy", "kotyyy"] },
+            { q: "What's my favorite thing about you?", a: ["your eyes","eyes","your smile", "smile","eye"] },
+            { q: "What's our love language?", a: ["quality time", "time together"] },
+            { q: "Who says 'I love you' first?", a: ["yahya", "yahia", "yaya", "yoyo", "yayoyy"] },
+            { q: "How many letters are in 'Malak'?", a: ["5", "five"] },
+            { q: "What's our favorite time to talk?", a: ["night", "at night", "evening" ,"every day","daly"] }
+        ];
+
+        let currentStep = 0;
+
+        function loadQuestion() {
+            document.getElementById('q-text').innerText = questions[currentStep].q;
+            document.getElementById('ans-input').value = "";
+        }
+
+        function checkAnswer() {
+            const input = document.getElementById('ans-input').value.trim().toLowerCase();
+            const card = document.getElementById('vault-ui');
+
+            if (questions[currentStep].a.includes(input)) {
+                document.getElementById(`dot-${currentStep}`).innerText = "💖";
+                document.getElementById(`dot-${currentStep}`).classList.add('active');
+                if (window.navigator.vibrate) window.navigator.vibrate(50);
+                
+                currentStep++;
+                if (currentStep < questions.length) {
+                    loadQuestion();
+                } else {
+                    openSecret();
+                }
+            } else {
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 400);
+                document.getElementById('ans-input').style.border = "2px solid var(--primary)";
+                setTimeout(() => document.getElementById('ans-input').style.border = "none", 1000);
+            }
+        }
+
+        function openSecret() {
+            if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+            document.getElementById('vault-ui').style.display = 'none';
+            document.getElementById('reveal-screen').style.display = 'flex';
+            setInterval(createHeart, 400);
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.textContent = ['❤️', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (20 + Math.random() * 20) + "px";
+            h.style.animationDuration = (4 + Math.random() * 3) + "s";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 7000);
+        }
+
+        document.getElementById('ans-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>

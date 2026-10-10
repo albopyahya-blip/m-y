@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Queen's Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff758f;
+            --glass: rgba(255, 255, 255, 0.2);
+            --border: rgba(255, 255, 255, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        /* البطاقة الأساسية */
+        .test-card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 20px;
+            border-radius: 35px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 10;
+        }
+
+        h2 { 
+            color: #d63384; 
+            margin-bottom: 35px; 
+            font-weight: 800; 
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            line-height: 1.4;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            min-height: 60px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 18px;
+            border: none;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(255, 77, 109, 0.2);
+        }
+
+        #yes-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        #no-btn {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            position: relative; 
+            z-index: 100;
+        }
+
+        /* شاشة النتيجة - تدعم الموبايل بالكامل */
+        #result-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .result-content {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            border: 2px solid var(--primary);
+            width: 100%;
+            max-width: 450px;
+            max-height: 90vh; /* ألا يتجاوز طول الشاشة */
+            display: flex;
+            flex-direction: column;
+            animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .final-msg { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: clamp(2.2rem, 8vw, 3rem); 
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* حاوية النص الطويل القابلة للتمرير */
+        .text-scroll {
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 20px;
+            text-align: left; /* محاذاة النص لليسار لسهولة القراءة */
+        }
+
+        .text-scroll::-webkit-scrollbar { width: 5px; }
+        .text-scroll::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+
+        .letter-text {
+            color: #444;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            white-space: pre-line; /* يحافظ على الفواصل والأسطر */
+        }
+
+        .back-btn {
+            padding: 12px 25px;
+            background: #fdf2f4;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            border: 1px solid var(--primary);
+            align-self: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="test-card">
+        <div style="font-size: 50px; margin-bottom: 15px;">😜</div>
+        <h2>Are you the most annoying person in my life? </h2>
+        <div class="btn-group">
+            <button class="btn" id="yes-btn" onclick="showResult()">YES</button>
+            <button class="btn" id="no-btn">NO</button>
+        </div>
+    </div>
+
+    <div id="result-overlay">
+        <div class="result-content">
+            <div style="font-size: 50px; margin-bottom: 10px; text-align: center;">❤️</div>
+            <h1 class="final-msg">I knew it!</h1>
+            
+            <div class="text-scroll">
+                <div class="letter-text">
+                    But you are my annoying Queen and I wouldn't change you for the world and I never will because loving you has become the most natural thing my heart has ever done I don't think there has ever been a single day since I met you where I wasn't grateful that somehow out of all the people in this world our paths crossed and my heart found its way to yours
+
+You don't even realize how many beautiful things you have changed inside me You made me softer kinder happier and more grateful for the little things in life You taught me that happiness isn't found in grand moments but in simple ones like hearing your laugh after a long day reading your good morning texts staying up late talking about absolutely nothing and somehow feeling like we talked about everything
+
+There are moments when I stop in the middle of my day and smile without even realizing it and when I ask myself why the answer is almost always you Maybe I remembered something funny you said or the way you smiled at me or maybe my heart simply missed you for a moment because that happens more often than you could ever imagine
+
+I wish you could see yourself through my eyes for just one minute I wish you could understand how beautiful you are not only because of the way you look but because of the way your soul feels You have this beautiful way of making people feel loved without even trying and I consider myself the luckiest person in the world because I get to experience that love every single day
+
+I love the way you become excited over little things I love the way you sometimes overthink and ask for reassurance I love the way you care more than you should and I love the way your eyes become brighter whenever you smile I even love the moments when you become adorably annoying because those moments became memories that I know I will smile about years from now
+
+Sometimes I find myself imagining our future without even trying I imagine celebrating your happiest moments holding your hand when life feels difficult laughing over silly things in the middle of the night and growing older while still looking at you with the same love I feel today Maybe even more because I don't think my heart has discovered all the reasons it has to love you yet
+
+I want to know every version of you The version that laughs until her stomach hurts The version that cries when life becomes difficult The version that gets excited over the smallest surprises The sleepy version of you The stubborn version of you and even the version of you that doesn't always feel strong because every single version of you deserves to be loved and I promise I will love them all
+
+I don't need expensive places or extraordinary moments to be happy Give me an ordinary evening with you and I promise it will become one of my favorite memories Give me your hand to hold and suddenly the entire world feels lighter Give me your smile and somehow my whole day becomes beautiful
+
+I want to become the person that feels like home to you I want you to know that no matter how difficult your day becomes there will always be someone waiting to hear about it Someone who will celebrate your victories and help carry your burdens Someone who will never get tired of reminding you how special you are even on the days when you don't feel that way yourself
+
+There will be days when life becomes difficult and there will be moments when things don't go as we planned but if there is one thing I am certain about it is this I want to face every beautiful moment and every difficult one with you I don't want perfection I only want honesty patience understanding and a lifetime of choosing each other over and over again
+
+Do you know what my favorite thing about loving you is It never feels like something I have to do It feels like something my heart was created to do Loving you feels like breathing I don't have to think about it because it simply happens naturally quietly and endlessly
+
+I hope years from now you still laugh at my jokes even when they aren't funny I hope you still steal my attention whenever you smile I hope I still look at you the same way I do today and feel my heart become softer whenever I hear your voice I hope we create so many beautiful memories together that we lose count of them
+
+And if one day life asks me what the greatest blessing I have ever received was my answer will always be the same It was finding you It was loving you It was being loved by you
+
+You are my favorite hello and my hardest goodbye You are my peace after chaos my comfort after difficult days and my happiest reason to smile You are the prayer I didn't know I was making and the dream I never want to wake up from
+
+So please continue being my annoying Queen Continue making me laugh Continue annoying me with the smallest things Continue filling my days with your beautiful chaos and continue allowing me to love you the way my heart has always wanted to because I promise you this no matter how much time passes no matter how old we become and no matter how many seasons life brings us I will never get tired of choosing you
+
+I loved you before I wrote these words I love you while I am writing them and I know without a single doubt that I will love you long after these words are forgotten because forever still doesn't feel long enough when it comes to loving you and if I had one life left to live and one last choice to make my heart would still whisper your name exactly the way it always has and it always will
+
+Because at the end of every day after every smile every conversation every memory and every tomorrow there is one thing that will never change
+
+You will always be MY annoying Queen and the greatest love story my heart will ever know
+
+                </div>
+            </div>
+            
+            <a href="index.html" class="back-btn">Go back, silly ❮</a>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('no-btn');
+
+        function moveButton() {
+            noBtn.style.position = 'fixed';
+            // ترك مسافة أمان 50 بكسل من الحواف لضمان عدم اختفاء الزرار
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 100) + 50;
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100) + 50;
+            
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+            
+            if (window.navigator.vibrate) window.navigator.vibrate(40);
+        }
+
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        noBtn.addEventListener('mouseover', moveButton);
+
+        function showResult() {
+            document.getElementById('result-overlay').style.display = 'flex';
+            if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+        }
+    </script>
+</body>
+</html>

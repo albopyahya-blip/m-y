@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Royal Letter Pro ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff758f;
+            --glass: rgba(255, 255, 255, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            touch-action: none; /* لمنع اهتزاز الصفحة أثناء السحب */
+            user-select: none;
+        }
+
+        /* --- واجهة الهدية (الافتتاحية) --- */
+        .gift-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .instruction {
+            color: #d63384;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        .glass-box {
+            width: 220px;
+            height: 220px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            box-shadow: 0 30px 60px rgba(255, 77, 109, 0.2);
+        }
+
+        .satin-ribbon {
+            position: absolute;
+            width: 50px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .magic-knot {
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            background: #fff;
+            border-radius: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 3px solid var(--primary);
+            cursor: grab;
+            transition: transform 0.1s ease;
+        }
+
+        /* --- كارت الرسالة الطويلة --- */
+        #final-card {
+            display: none;
+            position: fixed;
+            width: 90%;
+            max-width: 450px;
+            max-height: 85vh; /* تحديد أقصى ارتفاع لضمان عمل السكرول */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px 15px 30px 15px;
+            border-radius: 40px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            z-index: 100;
+            overflow: hidden; /* لمنع خروج النص */
+            animation: cardIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes cardIn {
+            from { transform: scale(0.5) translateY(100px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* حاوية النص القابلة للتمرير */
+        .text-scroll-area {
+            max-height: 55vh; /* مساحة الكلام داخل الكارت */
+            overflow-y: auto;
+            padding: 0 15px;
+            margin: 20px 0;
+            text-align: left;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        /* تنسيق شريط التمرير للموبايل وكروم */
+        .text-scroll-area::-webkit-scrollbar { width: 5px; }
+        .text-scroll-area::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        h1 { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 3rem; 
+            color: var(--primary); 
+            text-align: center;
+        }
+
+        .long-text {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1rem;
+            white-space: pre-line; /* لكي يحترم الأسطر الجديدة التي تكتبها */
+        }
+
+        .btn-close {
+            display: block;
+            margin: 10px auto 0 auto;
+            padding: 12px 40px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .sparkle { position: absolute; pointer-events: none; animation: fade 1s forwards; font-size: 20px; }
+        @keyframes fade { to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <!-- الجزء الأول: الهدية -->
+    <div class="gift-container" id="gift-view">
+        <p class="instruction">Swipe Down to Open</p>
+        <div class="glass-box">
+            <div class="satin-ribbon" id="ribbon"></div>
+            <div class="magic-knot" id="knot">🎀</div>
+        </div>
+    </div>
+
+    <!-- الجزء الثاني: الرسالة الطويلة -->
+    <div id="final-card">
+        <h1>My Queen</h1>
+        
+        <div class="text-scroll-area">
+            <div class="long-text">
+There are so many things I want to tell you that I don't even know where to begin Sometimes I feel like no language in this world was created to describe how much I love you because every time I try to put my feelings into words they somehow still feel smaller than what my heart holds for you You came into my life so quietly yet somehow changed everything about it You became my favorite part of every day without even trying and now I cannot imagine my days without thinking about you at least a hundred times I find myself smiling because of something you said hours ago and sometimes I laugh remembering the smallest moments we shared and realize that happiness has slowly started looking exactly like you You have become a part of every beautiful thing in my life Whenever something good happens you are the first person I want to tell Whenever something hurts me you are the person that brings peace back to my heart And whenever I pray I somehow always find your name among my prayers because asking God to protect you has become one of my favorite conversations with Him I wish you could see yourself through my eyes just once I wish you could understand how beautiful you are to me Not because of the way you look although you are beautiful beyond words but because of who you are Your kindness your smile your laugh your heart and even the little imperfections that make you so perfectly you I love every version of you The happy version the sleepy version the excited version the stubborn version and even the version of you that doesn't always feel okay I love the way my heart feels around you I love how time feels softer when I am with you and how the loudest days become peaceful just because I heard your voice There are moments when life feels overwhelming but somehow knowing that you exist in my world makes everything feel lighter You have no idea how many times I stop in the middle of my day just to smile because of you You have no idea how many prayers quietly carry your name Or how many times I thank God for bringing someone as beautiful as you into my life Sometimes I wonder what I did to deserve meeting you and every single time I fail to find an answer other than calling you my greatest blessing I don't want to love you only on your happiest days I want to love you on the difficult ones too I want to love you when life becomes heavy and when your smile feels harder to find I want to remind you that you never have to pretend to be strong around me because I would gladly carry your sadness with you if it means making your heart feel a little lighter I want to become your safest place The place you run to when life becomes difficult The person you call whenever you have good news or bad news The person that makes your heart feel at home I don't want to simply be someone you love I want to become someone whose presence makes life feel a little more beautiful for you every single day I want to know every dream hidden inside your heart I want to celebrate every victory no matter how small it may seem and I want to hold your hand through every difficult moment I want years from now for us to still laugh over the same silly things and look at each other with the same love we have today And do you know what amazes me the most I still find new reasons to love you every single day I thought there would come a day when I couldn't possibly love you more and somehow the next day arrives and proves me wrong once again My heart continues to discover new beautiful things about you that make me fall in love all over again Sometimes I miss you even while talking to you because no amount of time with you ever feels like enough I could spend hours listening to your voice and still wish for one more minute I could spend forever beside you and still ask life for a little more time I don't dream about perfect days anymore I dream about ordinary ones with you Sitting beside you while talking about absolutely nothing Walking together in comfortable silence Laughing at things no one else would understand Those moments have become my definition of happiness because happiness stopped being a place or a moment and slowly became a person and somehow that person became you If one day you feel tired of the world I hope you remember that there will always be one heart somewhere praying for your happiness more than its own If one day you feel unloved I hope you remember that there is someone whose entire world became brighter because you exist in it If one day life becomes too difficult I hope you remember that you will never have to face it alone as long as I am here You are my favorite hello and my hardest goodbye My sweetest thought in the middle of the night and my first prayer in the morning You are the peace I never knew I needed and the dream I never want to wake up from I don't know what tomorrow looks like and I don't know what life has planned for us but I know one thing with absolute certainty My heart chose you yesterday It chooses you today and it will continue choosing you tomorrow and every tomorrow after that And if I am asked one day what the greatest blessing of my life was I will smile without hesitation and say your name Because finding you changed me Loving you changed me And being loved by you became one of the most beautiful things that has ever happened to my soul If I had a thousand lifetimes I would still spend every single one searching for you If I had a thousand prayers your name would be written in every single one of them If I had a thousand hearts every one of them would still belong to you I loved you before writing these words I love you while writing them and I know that I will still love you long after they are forgotten because some things are simply meant to last forever And if forever truly exists then I hope forever looks like us Growing older together Laughing together Praying together Choosing each other every single day and realizing after all those years that my heart never once regretted loving you Because at the end of every beautiful day and every difficult one there will always be one truth that time will never change You were my favorite blessing yesterday You are my favorite blessing today and you will always be my favorite blessing tomorrow And no matter how many hearts exist in this world mine will always belong to only one Queen and that Queen will always be you
+
+            </div>
+        </div>
+
+        <a href="heart.html" class="btn-close">Back</a>
+    </div>
+
+    <script>
+        const knot = document.getElementById('knot');
+        const ribbon = document.getElementById('ribbon');
+        const giftView = document.getElementById('gift-view');
+        const card = document.getElementById('final-card');
+
+        let startY = 0;
+        let isDragging = false;
+
+        // أحداث اللاب توب والموبايل الموحدة
+        function onStart(e) {
+            isDragging = true;
+            startY = (e.pageY || e.touches[0].pageY);
+            knot.style.transition = "none";
+            knot.style.cursor = "grabbing";
+        }
+
+        function onMove(e) {
+            if (!isDragging) return;
+            const currentY = (e.pageY || e.touches[0].pageY);
+            const diff = currentY - startY;
+
+            if (diff > 0 && diff < 280) {
+                knot.style.transform = `translate(-50%, calc(-50% + ${diff}px))`;
+                ribbon.style.height = `calc(100% - ${diff/2}px)`;
+                
+                if(Math.random() > 0.8) {
+                    createSparkle( (e.pageX || e.touches[0].pageX), currentY);
+                }
+            }
+
+            if (diff > 200) {
+                openGift();
+            }
+        }
+
+        function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            knot.style.transition = "transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+            knot.style.transform = "translate(-50%, -50%)";
+            ribbon.style.height = "100%";
+            knot.style.cursor = "grab";
+        }
+
+        // تسجيل الأحداث
+        knot.addEventListener('mousedown', onStart);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+
+        knot.addEventListener('touchstart', onStart, { passive: false });
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('touchend', onEnd);
+
+        function openGift() {
+            if(!isDragging) return;
+            isDragging = false;
+            giftView.style.display = 'none';
+            card.style.display = 'block';
+            
+            // السماح بالتمرير داخل الرسالة بعد فتحها
+            document.body.style.touchAction = "auto"; 
+
+            if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+            spawnHearts();
+        }
+
+        function createSparkle(x, y) {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.innerHTML = "✨";
+            s.style.left = x + "px";
+            s.style.top = y + "px";
+            s.style.color = "white";
+            s.style.setProperty('--dx', (Math.random()-0.5)*100 + "px");
+            s.style.setProperty('--dy', (Math.random()-0.5)*100 + "px");
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+        }
+
+        function spawnHearts() {
+            for(let i=0; i<40; i++) {
+                const h = document.createElement('div');
+                h.style.position = "fixed";
+                h.style.left = "50%";
+                h.style.top = "50%";
+                h.style.fontSize = Math.random() * 30 + 20 + "px";
+                h.innerHTML = ["❤️", "💖", "🌸"][Math.floor(Math.random()*3)];
+                document.body.appendChild(h);
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 1000 + 100;
+                h.animate([
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) scale(0)`, opacity: 0 }
+                ], { duration: 2000, easing: 'ease-out' }).onfinish = () => h.remove();
+            }
+        }
+    </script>
+</body>
+</html>

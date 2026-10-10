@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CRITICAL_SYSTEM_ERROR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --danger-red: #ff0000;
+            --royal-pink: #ff4d6d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* --- المرحلة 1: الرعب التقني (تبدأ فوراً) --- */
+        #stage-horror { display: block; position: fixed; inset: 0; z-index: 1000; overflow: hidden; background: #000; }
+        #matrix-canvas { position: absolute; inset: 0; opacity: 0.6; }
+        
+        .terror-overlay {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 20px; text-align: center;
+            z-index: 10;
+        }
+        .error-card {
+            background: var(--danger-red); color: #fff; padding: 30px;
+            font-family: 'Poppins', sans-serif; border: 4px solid #fff;
+            box-shadow: 0 0 50px #000; font-weight: 900; 
+            animation: bounceShake 0.1s infinite; display: none;
+        }
+        @keyframes bounceShake { 0% { transform: scale(1) rotate(1deg); } 100% { transform: scale(1.05) rotate(-1deg); } }
+
+        .console-logs {
+            width: 100%; font-family: 'Fira Code', monospace; font-size: 10px;
+            color: var(--matrix-green); text-align: left; margin-top: 20px;
+            opacity: 0.9; height: 150px; overflow: hidden;
+        }
+        .wipe-box { width: 85%; margin-top: 50px; text-align: center; }
+        .p-outer { width: 100%; height: 10px; background: #222; border-radius: 20px; margin-top: 10px; overflow: hidden; }
+        .p-inner { width: 0%; height: 100%; background: #fff; box-shadow: 0 0 20px #fff; }
+
+        /* Strobe Effect */
+        .strobe { animation: strobeLight 0.15s infinite; }
+        @keyframes strobeLight { 0% { background: #000; } 50% { background: #300; } 100% { background: #000; } }
+
+        /* --- المرحلة النهائية: كارت الحب والاسكرول --- */
+        #stage-final {
+            display: none; height: 100%; width: 100%; 
+            justify-content: center; align-items: center; 
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            z-index: 5000;
+        }
+        .royal-card {
+            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px); width: 90%; max-width: 500px;
+            height: 80vh; border-radius: 40px; border: 2.5px solid #fff;
+            box-shadow: 0 40px 100px rgba(255, 77, 109, 0.2);
+            display: flex; flex-direction: column; overflow: hidden;
+            animation: cardReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes cardReveal { from { transform: translateY(100px) scale(0.9); } }
+
+        .card-head { padding: 40px 30px 10px 30px; text-align: center; }
+        .card-head h1 { font-family: 'Dancing Script', cursive; font-size: 3rem; color: #b91d47; }
+
+        .letter-scroll-wrap {
+            position: relative; flex-grow: 1; overflow: hidden; margin-bottom: 20px;
+            -webkit-mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent);
+            mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent);
+        }
+        .scroller {
+            height: 100%; overflow-y: auto; padding: 20px 30px 60px 30px;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
+        }
+        .scroller::-webkit-scrollbar { display: none; }
+        .msg-text { 
+            font-size: 1.15rem; color: #333; line-height: 2; 
+            font-weight: 500; text-align: left; white-space: pre-line;
+        }
+
+        .back-btn {
+            background: #b91d47; color: #fff; padding: 22px; width: 100%; border: none;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        .confetti-heart { position: fixed; pointer-events: none; z-index: 6000; animation: flyH 6s linear forwards; }
+        @keyframes flyH { to { transform: translateY(-130vh) rotate(360deg); opacity: 0; } }
+
+    </style>
+</head>
+<body onclick="activateVibration()"> <!-- اهتزاز بمجرد أول لمسة -->
+
+    <!-- مرحلة الرعب المباشر -->
+    <section id="stage-horror">
+        <canvas id="matrix-canvas"></canvas>
+        <div class="terror-overlay" id="overlay">
+            <div class="error-card" id="error-pop">
+FATAL ERROR: HEART PERMANENTLY ATTACHED TO MALAK
+<br>
+NO RECOVERY POSSIBLE LOVE_PROTOCOL RUNNING FOREVER
+            </div>
+            <div class="console-logs" id="logs-box"></div>
+            <div class="wipe-box" id="p-box" style="display: none;">
+                <p style="font-weight: bold; font-family: 'Fira Code'; font-size: 12px; margin-bottom: 5px; color: white;">DEVICE_WIPE_IN_PROGRESS: <span id="p-text">0</span>%</p>
+                <div class="p-outer"><div id="p-fill" class="p-inner"></div></div>
+                <p style="color: yellow; font-size: 10px; margin-top: 15px; font-weight: bold;">UPLOADING PHOTOS & WHATSAPP_CHATS... 🛰️</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- المرحلة النهائية -->
+    <section id="stage-final">
+        <div class="royal-card">
+            <div class="card-head">
+                <span style="font-size: 40px;"></span>
+                <h1>Stay Calm Maloktyyy</h1>
+            </div>
+            <div class="letter-scroll-wrap">
+                <div class="scroller">
+                    <p class="msg-text">
+                    Take a long deep breath and look at your phone one more time Everything is exactly where it belongs Your photos are safe your chats are untouched and not a single file was ever deleted
+
+So please don't be mad at me my Queen
+
+But before you forgive your silly Yoyii I want you to read something that comes straight from my heart
+
+I didn't make this prank just to scare you for a few seconds or to make you laugh when you realized that everything was okay I made it because there is something I wish I could explain to you every single day
+
+For a few moments your screen went completely dark and nothing looked the way it was supposed to Maybe your heart skipped a beat and maybe you felt like you had lost something precious
+
+And somehow that reminded me of something I feel every single day whenever I imagine a world without you in it
+
+Because to me losing you would be the only real System Failure I could never recover from
+
+Everything else in this world can be replaced Lost files can be restored Broken things can be repaired and forgotten memories can be found again
+
+But there has never been and there will never be another you
+
+Somewhere between our conversations our laughter our late night calls and all the beautiful little moments we have shared together you quietly became one of the greatest blessings God has ever written into my life
+
+You became my favorite hello after a difficult day and my favorite thought before I fall asleep You became my peace whenever life feels unbearably loud and my comfort whenever my days feel heavy
+
+And perhaps my favorite thing about loving you is that my heart never gets used to it No matter how many days pass I still smile whenever your name appears on my screen and I still thank God every single time I hear your voice
+
+I don't think I will ever stop falling in love with the little things about you
+
+Your beautiful smile that makes my world softer
+
+Your eyes that I could spend forever getting lost in
+
+Your laugh that instantly becomes my favorite sound in the world
+
+And your beautiful soul that taught me that the greatest blessings often arrive quietly when we least expect them
+
+You became my favorite memory and my favorite dream all at once
+
+Sometimes I wonder if you truly know how much happiness you have brought into my life because I don't think words will ever be enough to thank God for bringing you into mine
+
+I love the way time feels different whenever I am talking to you I love how hours become minutes whenever we laugh together and I love that my happiest memories have never been extraordinary moments They have always been the simplest ones that belong only to us
+
+A late night conversation that neither of us wanted to end
+
+A silly joke that made us laugh until our cheeks hurt
+
+A game that became my favorite simply because I played it with you
+
+A sweet message that turned an ordinary day into an unforgettable one
+
+They may seem like little things to everyone else but to me they became pages of the most beautiful story I have ever lived
+
+And do you know what makes me smile the most
+
+It is knowing that we still have so many beautiful tomorrows waiting for us So many memories we haven't made yet and so many dreams I cannot wait to live with you
+
+When I think about my future I don't think about places anymore I think about happiness smiles prayers and peaceful moments and somehow I always find you standing in the middle of every beautiful dream I have ever had
+
+You are the source code of my happiness the safest place my heart has ever known and the most beautiful surprise life has ever given me
+
+And if my heart were ever asked what it would protect forever it would never choose the files on my phone or anything this world could offer me
+
+It would choose you
+
+Your smile
+
+Your happiness
+
+Your dreams
+
+And the beautiful heart that I have been blessed enough to love
+
+No technology could ever replace what you mean to me No words will ever fully describe what I feel for you and no lifetime will ever feel long enough when I think about loving you
+
+So smile my love because everything is safe
+
+Your photos are safe
+
+Your chats are safe
+
+And thankfully your silly Yoyii is still hopelessly and endlessly in love with you
+
+Because the only thing that was never a prank is this
+
+If life asked me to choose all over again I would still choose you
+
+If my heart had to search through billions of souls in this world it would still find its way back to yours every single time
+
+And if God blessed me with a thousand lifetimes I would spend every single one of them thanking Him for allowing me to love someone as beautiful as you
+
+Because loving you has been the gentlest thing that has ever happened to my heart
+
+And if one day someone asks me what the greatest blessing in my life has been I don't think I would answer with words anymore I would simply smile and point to you
+
+Forever and always my Queen
+
+I love you more than yesterday less than tomorrow and I will spend my whole lifetime proving it to you
+
+Forever yours
+
+Yoyii ❤️
+
+                    </p>
+                </div>
+            </div>
+<button class="back-btn" onclick="window.location.href='heart.html'">back</button>        </div>
+    </section>
+
+    <script>
+        const horror = document.getElementById('stage-horror');
+        const final = document.getElementById('stage-final');
+        const fill = document.getElementById('p-fill');
+        const pTxt = document.getElementById('p-text');
+        const logs = document.getElementById('logs-box');
+
+        // Matrix Animation (تفتح فوراً)
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.height = window.innerHeight; canvas.width = window.innerWidth;
+        const letters = "MALAKSECURITYWIPEERROR66601";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff41";
+            ctx.font = fontSize + "px 'Fira Code'";
+            for(let i=0; i<drops.length; i++){
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        // تحميل الأكواد فوراً
+        const logLines = [
+            "> target_user: MALAK_QUEEN_IP",
+             "> searching_for_my_happiness... FOUND",
+              "> decrypting_my_heart... SUCCESS",
+               "> extracting_every_reason_i_love_you.zip... DONE",
+                "> downloading_your_beautiful_smile.png... COMPLETED",
+                 "> downloading_your_beautiful_eyes.png... COMPLETED",
+                  "> downloading_your_laugh.mp3... COMPLETED",
+                   "> syncing_our_beautiful_memories.db... DONE",
+                    "> scanning_my_heart... COMPLETED",
+                     "> RESULT: MALAK_FOUND",
+                      "> searching_for_my_home... FOUND",
+                       "> HOME = MALAK",
+                        "> heart_status: FOREVER_IN_LOVE",
+                         "> owner_of_this_heart: MALOKTYYY"
+        ];
+
+        window.onload = () => {
+            let logI = 0;
+            const logTimer = setInterval(() => {
+                if(logI < logLines.length){
+                    const p = document.createElement('p');
+                    p.style.marginBottom = "5px";
+                    p.innerText = logLines[logI];
+                    logs.appendChild(p);
+                    logI++;
+                    logs.scrollTop = logs.scrollHeight;
+                } else {
+                    clearInterval(logTimer);
+                    startPanic();
+                }
+            }, 500);
+        };
+
+        function startPanic() {
+            document.body.classList.add('strobe');
+            document.getElementById('error-pop').style.display = 'block';
+            document.getElementById('p-box').style.display = 'block';
+
+            let progress = 0;
+            const wipe = setInterval(() => {
+                progress += Math.floor(Math.random() * 4) + 1;
+                if(progress > 100) progress = 100;
+                fill.style.width = progress + '%';
+                pTxt.innerText = progress;
+
+                if (progress >= 100) {
+                    clearInterval(wipe);
+                    setTimeout(showTruth, 1500);
+                }
+            }, 100);
+        }
+
+        function showTruth() {
+            document.body.classList.remove('strobe');
+            horror.style.display = 'none';
+            final.style.display = 'flex';
+            document.body.style.background = "#fff5f7";
+            setInterval(createConfettiHeart, 400);
+        }
+
+        function createConfettiHeart() {
+            const h = document.createElement('div');
+            h.className = 'confetti-heart';
+            h.innerText = ['❤️', '💖', '💗'][Math.floor(Math.random() * 3)];
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.top = "105vh";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 7000);
+        }
+
+        function activateVibration() {
+            if (navigator.vibrate) {
+                // اهتزازات مربكة جداً
+                navigator.vibrate([1000, 200, 1000, 200, 2000]);
+            }
+            if(document.documentElement.requestFullscreen) document.body.requestFullscreen();
+        }
+    </script>
+</body>
+</html>

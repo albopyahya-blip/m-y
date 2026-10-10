@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --accent: #d63384;
+            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --glass: rgba(255, 255, 255, 0.28);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: var(--bg-grad); overflow: hidden; padding: 20px;
+        }
+        .card {
+            width: 100%; max-width: 460px;
+            background: var(--glass); backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 40px 25px; border-radius: 35px;
+            box-shadow: 0 20px 45px rgba(255, 77, 109, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center; z-index: 10;
+        }
+        #buttons-list { max-height: 75vh; overflow-y: auto; scrollbar-width: none; width: 100%; }
+        #buttons-list::-webkit-scrollbar { display: none; }
+        
+        .custom-button {
+            display: block; width: 100%; padding: 15px; margin-bottom: 12px;
+            background: #fff; color: var(--accent); border: 1.5px solid var(--primary);
+            border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 600;
+            text-align: center;
+        }
+        .custom-button:active { transform: scale(0.98); background: #ffeef2; }
+
+        #fab-container { position: fixed; bottom: 35px; right: 35px; z-index: 1000; }
+        .fab-btn {
+            width: 65px; height: 65px; background: #fff; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer; border: 3px solid var(--primary);
+        }
+        .heart {
+            position: fixed; bottom: -50px; pointer-events: none;
+            animation: floatUp linear forwards; z-index: 1;
+        }
+        @keyframes floatUp { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    
+            <div class="card" id="buttons-list" style="background: rgba(255,255,255,0.15);">
+                <a href="yahya.html" class="custom-button">!!!!!!</a>
+                <a href="comedown.html" class="custom-button">Come Down</a>
+                <a href="love.html" class="custom-button">Love</a>
+                <a href="game.html" class="custom-button">Game</a>
+                <a href="queen.html" class="custom-button">Queen</a>
+                <a href="you.html" class="custom-button">for you</a>
+                <a href="yahya1.html" class="custom-button">Wipe the fog</a>
+                <a href="yahya2.html" class="custom-button">Why?</a>
+                <a href="yahya3.html" class="custom-button">Swipe Down </a>
+                <a href="yahya4.html" class="custom-button">asala</a>
+                <a href="yahya5.html" class="custom-button">maloktyyy</a>
+                <a href="yahya6.html" class="custom-button">Forever Us</a>
+                <a href="story.html" class="custom-button">story</a>
+                <a href="soon.html" class="custom-button">soon</a>
+                <a href="soon.html" class="custom-button">soon</a>
+        </div>
+    
+
+    <!-- الوردة تعيدك لملف الكلام -->
+    <div id="fab-container">
+        <div class="fab-btn" onclick="window.location.href='heart.html'">🌸</div>
+    </div>
+
+    <script>
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.textContent = ['❤️','💖','🌸','✨','💕'][Math.floor(Math.random()*5)];
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (20 + Math.random()*25) + "px";
+            h.style.animationDuration = (4 + Math.random()*3) + "s";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 7000);
+        }
+        setInterval(createHeart, 450);
+    </script>
+</body>
+</html>

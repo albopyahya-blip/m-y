@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --p1: #ffafbd;
+            --p2: #ffc3a0;
+            --p3: #ee9ca7;
+            --p4: #ffdde1;
+            --deep-pink: #c9184a;
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, var(--p1), var(--p2), var(--p3), var(--p4));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            top: -20px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* الكارت الرئيسي */
+        .card {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 600px; /* تم تكبير العرض الأقصى للكارت */
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: clamp(30px, 5vw, 50px);
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .heart {
+            font-size: clamp(50px, 10vw, 80px);
+            animation: pulse 1.8s infinite;
+            display: inline-block;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 5px 15px rgba(201, 24, 74, 0.3));
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--deep-pink);
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 10px;
+        }
+
+        .since-date {
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #5d5d5d;
+            background: rgba(255, 255, 255, 0.45);
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: clamp(25px, 5vw, 40px);
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* العداد المطور (حل مشكلة الحجم) */
+        .timer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: clamp(10px, 2vw, 20px);
+            margin-bottom: clamp(30px, 5vw, 45px);
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.85);
+            padding: clamp(15px, 3vw, 25px) 10px;
+            border-radius: 22px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            min-width: clamp(90px, 20vw, 130px); /* ضمان عرض مناسب لكل صندوق */
+            flex: 1 1 110px; /* مرونة في التوسع */
+            transition: transform 0.3s ease;
+            display: none;
+        }
+
+        .time-box:hover { transform: translateY(-5px); }
+
+        .num {
+            display: block;
+            font-size: clamp(1.8rem, 4vw, 2.5rem); /* تكبير الأرقام */
+            font-weight: 700;
+            color: var(--deep-pink);
+            line-height: 1.1;
+        }
+
+        .label {
+            display: block;
+            font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+            color: #777;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+
+        /* صندوق الرسالة */
+        .message-box {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            padding: clamp(20px, 4vw, 35px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 2px 15px rgba(0,0,0,0.02);
+        }
+
+        #quote {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            color: #333;
+            font-style: italic;
+            line-height: 1.8;
+            transition: opacity 0.8s ease;
+        }
+
+        /* زر الانتقال */
+        .next-btn {
+            position: fixed;
+            bottom: clamp(20px, 4vw, 40px);
+            right: clamp(20px, 4vw, 40px);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            text-decoration: none;
+            color: var(--deep-pink);
+            font-weight: 600;
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .next-btn:hover {
+            background: var(--deep-pink);
+            color: white;
+            transform: scale(1.08) translateY(-5px);
+        }
+
+        @media (max-width: 400px) {
+            .time-box { min-width: 40%; } /* تظهر كـ 2 في كل صف على الموبايلات الصغيرة جداً */
+        }
+
+        .back-to-menu {
+            display: inline-block;
+            margin-top: 25px; /* مسافة بينه وبين الكلام */
+            padding: 12px 35px;
+            background: var(--deep-pink);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(201, 24, 74, 0.2);
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div id="particles"></div>
+
+    <div class="card">
+        <div class="heart">❤️</div>
+        <h1>Our Story</h1>
+        <div class="since-date">SINCE JUNE 2, 2026</div>
+
+        <div class="timer-container" id="timer">
+            <div class="time-box" id="b-y"><span class="num" id="y">0</span><span class="label">Years</span></div>
+            <div class="time-box" id="b-m"><span class="num" id="m">0</span><span class="label">Months</span></div>
+            <div class="time-box" id="b-d"><span class="num" id="d">0</span><span class="label">Days</span></div>
+            <div class="time-box" id="b-h"><span class="num" id="h">0</span><span class="label">Hours</span></div>
+            <div class="time-box" id="b-min"><span class="num" id="min">0</span><span class="label">Mins</span></div>
+            <div class="time-box" id="b-sec"><span class="num" id="sec">0</span><span class="label">Secs</span></div>
+        </div>
+
+        <div class="message-box">
+            <p id="quote">Your special message is being chosen...</p>
+        </div>
+
+                <a href="heart.html" class="back-to-menu">Back</a>
+
+    </div>
+
+
+    <script>
+        const targetDate = new Date("June 2, 2026 00:00:00").getTime();
+        
+        // القائمة الكبيرة للرسائل (نفس القائمة التي أرسلتها أنت)
+        const messages = [
+  "Malak, loving you is my favorite feeling in this world.",
+  "My Queen, your heart is where mine will always belong.",
+  "Maloktyyyy, every time I think of you, my whole day gets better.",
+  "My Princess, you are the peace I never knew I was looking for.",
+  "Malak, your love is the most beautiful thing that ever happened to me.",
+  "My Queen, no matter where life takes me, my heart will always find you.",
+  "Maloktyyyy, I could spend forever admiring everything about you.",
+  "My Princess, your smile is enough to brighten my darkest days.",
+  "Malak, I love the way you make my heart feel so calm.",
+  "My Queen, you are my favorite blessing every single day.",
+    "Malak, you are the first thought that makes me smile every morning.",
+  "My Queen, your love is the most peaceful place I've ever known.",
+  "Maloktyyyy, I still smile every time your name appears on my screen.",
+  "My Princess, every second with you feels like a beautiful dream.",
+  "Malak, your eyes tell the most beautiful stories.",
+  "My Queen, I never knew my heart could love this deeply.",
+  "Maloktyyyy, every day I spend loving you is my favorite day.",
+  "My Princess, your love gives my life a whole new meaning.",
+  "Malak, I would choose you in every lifetime.",
+  "My Queen, your happiness is the reason behind my biggest smiles.",
+  "Maloktyyyy, I never stop thanking life for bringing you to me.",
+  "My Princess, you make every little moment unforgettable.",
+  "Malak, your smile is my favorite kind of magic.",
+  "My Queen, every heartbeat reminds me how much I love you.",
+  "Maloktyyyy, I feel like the luckiest person because I have you.",
+  "My Princess, you are everything my heart has ever wished for.",
+  "Malak, you make my world feel warmer every day.",
+  "My Queen, your love is the light that guides me.",
+  "Maloktyyyy, nothing feels more right than loving you.",
+  "My Princess, you are my favorite person to dream about.",
+  "Malak, every hug from you feels like home.",
+  "My Queen, you are the reason I believe in forever.",
+  "Maloktyyyy, I never imagined someone could make me this happy.",
+  "My Princess, I love every little thing that makes you who you are.",
+  "Malak, your voice has the power to calm every storm inside me.",
+  "My Queen, I could spend forever looking into your eyes.",
+  "Maloktyyyy, every love song reminds me of you.",
+  "My Princess, your heart is my favorite place to be.",
+  "Malak, I love you more with every passing day.",
+  "My Queen, you make my future feel exciting.",
+  "Maloktyyyy, being with you is my favorite adventure.",
+  "My Princess, you are my sweetest blessing.",
+  "Malak, you make every sunrise feel more beautiful.",
+  "My Queen, loving you feels so natural.",
+  "Maloktyyyy, I never get tired of hearing your laugh.",
+  "My Princess, you are the peace my soul was searching for.",
+  "Malak, every memory with you is a treasure.",
+  "My Queen, I can't wait to make more memories with you.",
+  "Maloktyyyy, your smile makes my heart skip a beat.",
+  "My Princess, you are my forever favorite hello.",
+  "Malak, your love is the best part of my life.",
+  "My Queen, I feel complete whenever I'm with you.",
+  "Maloktyyyy, you are the dream I never want to wake up from.",
+  "My Princess, I promise to keep choosing you every day.",
+  "Malak, your happiness means more to me than anything else.",
+  "My Queen, you make every ordinary day extraordinary.",
+  "Maloktyyyy, I fall in love with you all over again every single day.",
+  "My Princess, your love is my greatest strength.",
+  "Malak, I see my future every time I look at you.",
+  "My Queen, your heart is my favorite destination.",
+  "Maloktyyyy, you make my life feel beautifully complete.",
+  "My Princess, your love is the sweetest feeling I've ever known.",
+  "Malak, every day with you is another reason to smile.",
+  "My Queen, I love the way you make everything feel easy.",
+  "Maloktyyyy, you are the best decision my heart has ever made.",
+  "My Princess, your presence is my greatest comfort.",
+  "Malak, your love makes me believe anything is possible.",
+  "My Queen, I could never stop loving you.",
+  "Maloktyyyy, every heartbeat belongs to you.",
+  "My Princess, you make forever sound too short.",
+  "Malak, I love the beautiful person you are inside and out.",
+  "My Queen, every moment with you is a memory worth keeping.",
+  "Maloktyyyy, I miss you even before we say goodbye.",
+  "My Princess, you are the calm in every storm.",
+  "Malak, I hope you always know how deeply you're loved.",
+  "My Queen, your smile is my favorite reason to smile.",
+  "Maloktyyyy, you are the missing piece I never knew I needed.",
+  "My Princess, I could spend a lifetime loving you.",
+  "Malak, every day starts beautifully because of you.",
+  "My Queen, you make every dream feel closer.",
+  "Maloktyyyy, my heart feels safest with you.",
+  "My Princess, I love every version of you.",
+  "Malak, your kindness makes me admire you even more.",
+  "My Queen, I want every tomorrow to include you.",
+  "Maloktyyyy, you are my favorite reason to stay hopeful.",
+  "My Princess, your love is my happy place.",
+  "Malak, every smile of yours becomes my favorite memory.",
+  "My Queen, you make life feel so much more beautiful.",
+  "Maloktyyyy, I love you more than yesterday and less than tomorrow.",
+  "My Princess, your hugs heal everything.",
+  "Malak, you are my forever and always.",
+  "My Queen, every part of my heart belongs to you.",
+  "Maloktyyyy, you make every day worth looking forward to.",
+  "My Princess, I never stop falling for you.",
+  "Malak, you are the reason my heart feels alive.",
+  "My Queen, I feel blessed every moment I have you.",
+  "Maloktyyyy, your love is my greatest treasure.",
+  "My Princess, you make my soul feel at peace.",
+  "Malak, I still get butterflies because of you.",
+  "My Queen, loving you is my favorite habit.",
+  "Maloktyyyy, you make my world shine brighter.",
+    "Malak, every moment away from you makes me miss you even more.",
+  "My Queen, your love is the greatest gift life has ever given me.",
+  "Maloktyyyy, your smile is my favorite reason to smile.",
+  "My Princess, I never knew forever could have your name.",
+  "Malak, every heartbeat reminds me how much I adore you.",
+  "My Queen, you are my peace after every long day.",
+  "Maloktyyyy, I love the way you make my world feel complete.",
+  "My Princess, your love is my favorite place to rest.",
+  "Malak, every dream I have somehow leads me back to you.",
+  "My Queen, nothing compares to the happiness you bring me.",
+  "Maloktyyyy, I could spend forever falling in love with you.",
+  "My Princess, you are the brightest part of my story.",
+  "Malak, your love is the reason my heart feels alive.",
+  "My Queen, I never stop thanking God for you.",
+  "Maloktyyyy, your eyes are my favorite view.",
+  "My Princess, you make every moment worth remembering.",
+  "Malak, your voice is enough to make my whole day better.",
+  "My Queen, loving you is the easiest thing I've ever done.",
+  "Maloktyyyy, you are my favorite notification.",
+  "My Princess, every day feels lighter because of you.",
+  "Malak, I find a thousand reasons to love you every day.",
+  "My Queen, my heart feels safest with you.",
+  "Maloktyyyy, I love the way you understand me without words.",
+  "My Princess, you are the dream I never want to lose.",
+  "Malak, your happiness will always be part of mine.",
+  "My Queen, I still get excited every time I see you.",
+  "Maloktyyyy, your love makes every problem feel smaller.",
+  "My Princess, you are my favorite chapter in life.",
+  "Malak, I hope I always make you smile.",
+  "My Queen, you are everything I prayed for.",
+  "Maloktyyyy, every second with you is priceless.",
+  "My Princess, you are the calm my heart always looks for.",
+  "Malak, I love how your smile changes my mood instantly.",
+  "My Queen, every love story reminds me of us.",
+  "Maloktyyyy, I want to keep making memories with you forever.",
+  "My Princess, your heart is my favorite place.",
+  "Malak, you make my ordinary days extraordinary.",
+  "My Queen, every hug from you feels like home.",
+  "Maloktyyyy, I never stop falling in love with your soul.",
+  "My Princess, your kindness makes you even more beautiful.",
+  "Malak, I choose you today and every day after.",
+  "My Queen, you are my greatest answered prayer.",
+  "Maloktyyyy, you make my heart smile without trying.",
+  "My Princess, I love the peace you bring into my life.",
+  "Malak, I never imagined love could feel this beautiful.",
+  "My Queen, you make forever sound wonderful.",
+  "Maloktyyyy, my heart belongs to you completely.",
+  "My Princess, every little thing about you is unforgettable.",
+  "Malak, I love watching you smile.",
+  "My Queen, you are my sunshine on cloudy days.",
+  "Maloktyyyy, your laugh is my favorite melody.",
+  "My Princess, I could listen to your voice forever.",
+  "Malak, you make every heartbeat feel meaningful.",
+  "My Queen, being yours is my favorite feeling.",
+  "Maloktyyyy, you are my sweetest addiction.",
+  "My Princess, every moment with you is a blessing.",
+  "Malak, I miss you even when we're talking.",
+  "My Queen, your love gives me endless strength.",
+  "Maloktyyyy, I still can't believe I get to love you.",
+  "My Princess, you're the best part of every tomorrow.",
+  "Malak, your love fills every empty space in my heart.",
+  "My Queen, you are my favorite place to be.",
+  "Maloktyyyy, I feel lucky every single day because of you.",
+  "My Princess, your happiness is my favorite goal.",
+  "Malak, you make every goodbye feel too soon.",
+  "My Queen, my heart beats a little faster because of you.",
+  "Maloktyyyy, I love every little detail about you.",
+  "My Princess, you are my forever safe place.",
+  "Malak, I hope you always feel as loved as you make me feel.",
+  "My Queen, every smile of yours is a beautiful memory.",
+  "Maloktyyyy, you're the reason I believe in true love.",
+  "My Princess, your love makes me a better person.",
+  "Malak, I never want a day without you in it.",
+  "My Queen, every road feels right when you're beside me.",
+  "Maloktyyyy, your heart is my favorite home.",
+  "My Princess, I love the way you make everything brighter.",
+  "Malak, your presence is all I need to feel okay.",
+  "My Queen, you are my favorite blessing every morning.",
+  "Maloktyyyy, every thought of you makes me smile.",
+  "My Princess, you are my forever favorite person.",
+  "Malak, loving you is my life's greatest joy.",
+  "My Queen, I hope I never stop making you feel special.",
+  "Maloktyyyy, you're the sweetest part of my life.",
+  "My Princess, I can't wait to spend more moments with you.",
+  "Malak, you make my world feel magical.",
+  "My Queen, your love is my greatest comfort.",
+  "Maloktyyyy, every heartbeat quietly chooses you.",
+  "My Princess, your smile is all I need today.",
+  "Malak, you're the reason I look forward to tomorrow.",
+  "My Queen, my happiest memories always include you.",
+  "Maloktyyyy, you're my favorite dream come true.",
+  "My Princess, I love the beautiful soul inside you.",
+  "Malak, you make my heart feel complete.",
+  "My Queen, I would choose you over and over again.",
+  "Maloktyyyy, your love makes life feel effortless.",
+  "My Princess, every day with you is a beautiful adventure.",
+  "Malak, I hope forever starts and ends with us.",
+  "My Queen, you are my heart's favorite destination.",
+  "Maloktyyyy, I love you more than words will ever explain.",
+  "My Princess, you'll always be my greatest love.",
+    "Malak, your love is the melody my heart never gets tired of.",
+  "My Queen, every day with you feels like a beautiful blessing.",
+  "Maloktyyyy, I still can't believe someone as amazing as you is mine.",
+  "My Princess, your smile is the reason my heart feels so light.",
+  "Malak, I never knew love could feel this peaceful until you.",
+  "My Queen, you are the most beautiful part of every dream I have.",
+  "Maloktyyyy, you make my heart beat with a happiness I can't explain.",
+  "My Princess, being with you is my favorite place in the world.",
+  "Malak, I could never get tired of loving you.",
+  "My Queen, every little thing about you is unforgettable.",
+  "Maloktyyyy, your happiness is the only thing I wish for every day.",
+  "My Princess, I fall for your heart more every single day.",
+  "Malak, your love makes me feel like I have everything.",
+  "My Queen, I love the way you make ordinary days extraordinary.",
+  "Maloktyyyy, every message from you instantly makes me smile.",
+  "My Princess, I see forever every time I look at you.",
+  "Malak, your eyes are my favorite place to get lost.",
+  "My Queen, my heart feels complete whenever you're near.",
+  "Maloktyyyy, you are my peace in a noisy world.",
+  "My Princess, I never stop thanking life for bringing you to me.",
+  "Malak, I love you more than yesterday and even more tomorrow.",
+  "My Queen, you're the best chapter my life has ever written.",
+  "Maloktyyyy, I wish I could pause time whenever I'm with you.",
+  "My Princess, your love is my greatest comfort.",
+  "Malak, every heartbeat tells me I'm exactly where I belong—with you.",
+  "My Queen, your voice is the sweetest sound I'll ever know.",
+  "Maloktyyyy, you are the answer my heart never stopped searching for.",
+  "My Princess, loving you feels like breathing—so natural.",
+  "Malak, I never knew someone could mean this much to me.",
+  "My Queen, your love colors every part of my world.",
+  "Maloktyyyy, every day with you is my favorite adventure.",
+  "My Princess, I love every tiny detail that makes you, you.",
+  "Malak, your hugs make everything feel okay again.",
+  "My Queen, I find happiness in the simplest moments with you.",
+  "Maloktyyyy, you're the reason I believe in beautiful endings and new beginnings.",
+  "My Princess, your heart is my favorite place to stay.",
+  "Malak, every sunrise reminds me how lucky I am to have you.",
+  "My Queen, I hope I never stop making you smile.",
+  "Maloktyyyy, your love gives me a reason to dream bigger.",
+  "My Princess, every time I see you, I fall in love all over again.",
+  "Malak, I love the peace your presence brings me.",
+  "My Queen, you're my forever favorite person.",
+  "Maloktyyyy, I never imagined love could be this beautiful.",
+  "My Princess, you make my heart feel so incredibly alive.",
+  "Malak, my happiest moments always begin with you.",
+  "My Queen, you're the only place my heart truly belongs.",
+  "Maloktyyyy, your smile is worth more than a thousand sunsets.",
+  "My Princess, I love being the reason you smile.",
+  "Malak, your love is my greatest strength.",
+  "My Queen, I could spend forever making memories with you.",
+  "Maloktyyyy, you're the sweetest part of every day.",
+  "My Princess, you make forever feel too short.",
+  "Malak, every thought of you brings peace to my heart.",
+  "My Queen, your love is the light that guides me home.",
+  "Maloktyyyy, I choose you in every heartbeat.",
+  "My Princess, loving you is the best decision my heart ever made.",
+  "Malak, I still get butterflies every time you text me.",
+  "My Queen, your happiness will always be my favorite goal.",
+  "Maloktyyyy, your love is the safest place I've ever known.",
+  "My Princess, every smile of yours is my favorite memory.",
+  "Malak, I don't need perfection because I already have you.",
+  "My Queen, you're the reason my heart feels so full.",
+  "Maloktyyyy, every moment with you becomes a memory I treasure.",
+  "My Princess, you are the calm that my soul always needed.",
+  "Malak, I hope you always know how deeply I adore you.",
+  "My Queen, you make every tomorrow worth waiting for.",
+  "Maloktyyyy, you're the most beautiful surprise life ever gave me.",
+  "My Princess, I never want to stop loving you.",
+  "Malak, you make my heart smile in ways words never could.",
+  "My Queen, every dream feels possible with you beside me.",
+  "Maloktyyyy, I love the way your eyes shine when you're happy.",
+  "My Princess, your love is my favorite blessing.",
+  "Malak, every road becomes beautiful when I'm walking with you.",
+  "My Queen, your kindness makes me love you even more.",
+  "Maloktyyyy, I carry you in every heartbeat.",
+  "My Princess, you are the sunshine my heart was waiting for.",
+  "Malak, I love you in all the little moments.",
+  "My Queen, my soul feels at home with you.",
+  "Maloktyyyy, every hug from you feels like magic.",
+  "My Princess, your love makes everything brighter.",
+  "Malak, my favorite future is the one with you in it.",
+  "My Queen, I never knew happiness had your smile.",
+  "Maloktyyyy, every day you give my heart another reason to love you.",
+  "My Princess, I treasure every second we share together.",
+  "Malak, you are my sweetest dream that came true.",
+  "My Queen, your heart is my forever home.",
+    "Malak, every time you smile, the whole world feels brighter to me.",
+  "My Queen, loving you is the most beautiful part of my life.",
+  "Maloktyyyy, your love makes every ordinary day feel extraordinary.",
+  "My Princess, you're the first person I want to tell everything to.",
+  "Malak, your happiness is my favorite destination.",
+  "My Queen, my heart has never been this sure about anything before.",
+  "Maloktyyyy, you're the reason I wake up with a smile.",
+  "My Princess, every second spent with you is a second I'll always treasure.",
+  "Malak, I love how effortlessly you make me feel at peace.",
+  "My Queen, you turned my dreams into reality.",
+  "Maloktyyyy, no matter what happens, you'll always be my favorite person.",
+  "My Princess, you make my heart feel lighter every single day.",
+  "Malak, I never knew love could feel this safe.",
+  "My Queen, your smile is my favorite masterpiece.",
+  "Maloktyyyy, every little thing about you makes me fall even harder.",
+  "My Princess, your love is my greatest comfort.",
+  "Malak, I never stop smiling when I think about you.",
+  "My Queen, you are my heart's happiest place.",
+  "Maloktyyyy, every hug from you feels like home.",
+  "My Princess, you make forever sound too short.",
+  "Malak, I hope I always make you feel as loved as you make me feel.",
+  "My Queen, you are my favorite blessing from God.",
+  "Maloktyyyy, I love every tiny detail that makes you unique.",
+  "My Princess, your eyes are where I find my peace.",
+  "Malak, you are the reason love feels so beautiful.",
+  "My Queen, I want to spend every tomorrow beside you.",
+  "Maloktyyyy, my heart smiles every time I hear your voice.",
+  "My Princess, you're the most beautiful thought in my mind.",
+  "Malak, every love story reminds me of us.",
+  "My Queen, you're everything I never knew I needed.",
+  "Maloktyyyy, you make even silence feel magical.",
+  "My Princess, I love how you make life feel so easy.",
+  "Malak, every day with you feels like a gift.",
+  "My Queen, your love is the greatest peace I've ever known.",
+  "Maloktyyyy, every heartbeat whispers your name.",
+  "My Princess, I could spend forever getting to know you.",
+  "Malak, you make every goodbye the hardest part of my day.",
+  "My Queen, your love fills every empty space in my heart.",
+  "Maloktyyyy, I never get tired of choosing you.",
+  "My Princess, you are the sunshine in all my cloudy days.",
+  "Malak, my world became brighter the moment you walked into it.",
+  "My Queen, you are my forever favorite hello.",
+  "Maloktyyyy, your love is my daily motivation.",
+  "My Princess, every smile of yours is worth a thousand words.",
+  "Malak, I still get butterflies whenever I see your name.",
+  "My Queen, you're my safest place in this world.",
+  "Maloktyyyy, I fall in love with you a little more every night.",
+  "My Princess, you make my soul feel complete.",
+  "Malak, your voice is the calm my heart always needs.",
+  "My Queen, I never imagined love could be this effortless.",
+  "Maloktyyyy, every memory with you is my favorite memory.",
+  "My Princess, you make my future look beautiful.",
+  "Malak, loving you is the easiest promise I've ever made.",
+  "My Queen, your heart is my favorite home.",
+  "Maloktyyyy, I hope I never stop making you laugh.",
+  "My Princess, your happiness is my greatest achievement.",
+  "Malak, every day I thank God for giving me you.",
+  "My Queen, your love is my forever comfort.",
+  "Maloktyyyy, I love the way your smile changes my whole mood.",
+  "My Princess, you're the dream my heart never wants to wake up from.",
+  "Malak, every kiss from you feels like magic.",
+  "My Queen, you are my once-in-a-lifetime kind of love.",
+  "Maloktyyyy, my heart belongs to you without hesitation.",
+  "My Princess, every day with you becomes my favorite day.",
+  "Malak, I can't imagine my future without you in it.",
+  "My Queen, your love is the best thing that ever happened to me.",
+  "Maloktyyyy, you're the reason I believe in forever.",
+  "My Princess, I could look into your eyes for a lifetime.",
+  "Malak, your love gives me strength I never knew I had.",
+  "My Queen, you are the answer to every silent prayer.",
+  "Maloktyyyy, every heartbeat feels more meaningful because of you.",
+  "My Princess, your hugs heal parts of me words never could.",
+  "Malak, you're the sweetest chapter of my story.",
+  "My Queen, you make my heart feel understood.",
+  "Maloktyyyy, I love every version of you.",
+  "My Princess, you are my greatest adventure.",
+  "Malak, every morning feels better knowing you exist.",
+  "My Queen, you make forever sound beautiful.",
+  "Maloktyyyy, I choose you with every heartbeat.",
+  "My Princess, your love is the greatest treasure I've ever found.",
+  "Malak, your smile is all I need to have a good day.",
+  "My Queen, I never stop admiring your beautiful soul.",
+  "Maloktyyyy, you're my peace in every storm.",
+  "My Princess, every day I spend with you is a blessing.",
+  "Malak, I love how naturally you make me happy.",
+  "My Queen, your love feels like the warmest embrace.",
+  "Maloktyyyy, every dream I have somehow includes you.",
+  "My Princess, you're my forever safe place.",
+  "Malak, your heart is the most beautiful thing I've ever known.",
+  "My Queen, I still can't believe I get to love you.",
+  "Maloktyyyy, you make every little moment unforgettable.",
+  "My Princess, I hope my love always makes you feel special.",
+  "Malak, every road in my life somehow leads me back to you.",
+  "My Queen, you're my favorite person in every universe.",
+  "Maloktyyyy, your love is the melody my heart plays every day.",
+  "My Princess, I promise to keep loving you more with each sunrise.",
+  "Malak, you're the best decision my heart has ever made.",
+  "My Queen, my forever begins and ends with you.",
+  "Maloktyyyy, I hope I spend every tomorrow making you happy.",
+  "My Princess, I fall in love with your soul more each day.",
+  "Malak, your love makes life feel wonderfully simple.",
+  "My Queen, I could never love anyone the way I love you.",
+  "Maloktyyyy, every heartbeat reminds me that you're my forever.",
+  "My Princess, your smile is my favorite kind of happiness.",
+  "Malak, you are the best part of every chapter in my life.",
+  "My Queen, every day I love you a little more than before.",
+  "Maloktyyyy, I never want to imagine a world without you.",
+  "My Princess, being yours is my greatest blessing.",
+  "Malak, no matter where life takes us, my heart will always choose you.",
+  "My Princess, you are my sweetest forever.",
+  "Malak, every heartbeat quietly whispers your name.",
+  "My Queen, I never knew home could be a person until I met you.",
+  "Maloktyyyy, you are my favorite miracle.",
+  "My Princess, your love is the most beautiful chapter of my life.",
+  "Malak, I will always find my way back to you.",
+  "My Queen, your love is all my heart will ever need.",
+  "Maloktyyyy, you are my once-in-a-lifetime kind of love.",
+  "My Princess, every day I love you a little more than before.",
+  "Maloktyyyy, being loved by you is the greatest gift I've ever received.",
+  "My Princess, I fall in love with you every time you smile.",
+  "Malak, your happiness will always matter more than my own.",
+  "My Queen, you make my heart feel like it's finally home.",
+  "Maloktyyyy, I never get tired of hearing your voice.",
+  "My Princess, every memory with you is my favorite one.",
+  "Malak, you are the reason I believe in beautiful beginnings.",
+  "My Queen, every road feels right as long as it leads to you.",
+  "Maloktyyyy, you make my heart race and my mind feel peaceful at the same time.",
+  "My Princess, I don't need a perfect life when I have you beside me."
+];
+
+        function updateCounter() {
+            const now = new Date().getTime();
+            let diff = Math.abs(now - targetDate);
+
+            const time = {
+                y: Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)),
+                m: Math.floor((diff / (1000 * 60 * 60 * 24 * 30.44)) % 12),
+                d: Math.floor((diff / (1000 * 60 * 60 * 24)) % 30.44),
+                h: Math.floor((diff / (1000 * 60 * 60)) % 24),
+                min: Math.floor((diff / (1000 * 60)) % 60),
+                sec: Math.floor((diff / 1000) % 60)
+            };
+
+            for (const key in time) {
+                const numEl = document.getElementById(key);
+                const boxEl = document.getElementById('b-' + key);
+                if(numEl) numEl.innerText = time[key];
+                
+                if (time[key] > 0 || key === 'sec' || key === 'min') {
+                    if(boxEl) boxEl.style.display = 'block';
+                } else {
+                    if(boxEl) boxEl.style.display = 'none';
+                }
+            }
+        }
+
+        function updateHourlyMessage() {
+            // استخدام عدد الساعات منذ Epoch لضمان تغير الرسالة كل ساعة وعدم التكرار
+            const hoursSinceEpoch = Math.floor(Date.now() / (1000 * 60 * 60));
+            const index = hoursSinceEpoch % messages.length;
+            
+            const quoteEl = document.getElementById("quote");
+            quoteEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                quoteEl.innerText = `"${messages[index]}"`;
+                quoteEl.style.opacity = 1;
+            }, 800);
+        }
+
+        function createParticle() {
+            const symbols = ['❤️', '✨', '🌸', '💖', '🤍'];
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            p.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            p.style.opacity = Math.random() * 0.4 + 0.3;
+            document.getElementById('particles').appendChild(p);
+            setTimeout(() => p.remove(), 7000);
+        }
+
+        setInterval(updateCounter, 1000);
+        setInterval(createParticle, 600);
+        
+        // التحقق كل دقيقة من دخول ساعة جديدة
+        setInterval(() => {
+            const now = new Date();
+            if (now.getMinutes() === 0) updateHourlyMessage();
+        }, 60000);
+
+        updateCounter();
+        updateHourlyMessage();
+    </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Universal Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --primary-glow: rgba(255, 77, 109, 0.4);
+            --bg-grad: linear-gradient(135deg, #fff5f7 0%, #fecfef 100%);
+        }
+
+        /* منع التكبير بالخطأ في الموبايل */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            touch-action: manipulation;
+        }
+
+        body {
+            background: var(--bg-grad);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* كارت الموبايل الأنيق */
+        .mobile-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            width: 100%;
+            max-width: 400px;
+            padding: 35px 20px;
+            border-radius: 35px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.1);
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* حاوية العداد الجديد (التصميم المطور) */
+        .progress-container {
+            width: 80%;
+            height: 8px;
+            background: rgba(255, 77, 109, 0.15); /* مسار شفاف خلف العداد */
+            border-radius: 50px;
+            margin: 0 auto 30px auto;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* شريط العداد الملون المتوهج */
+        .progress-line {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4d6d, #ff758f);
+            width: 0%;
+            border-radius: 50px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        /* النص الرئيسي */
+        #love-text {
+            font-size: clamp(1.8rem, 8vw, 2.8rem);
+            color: #333;
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.8s ease-in-out;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        /* اسم اللغة */
+        #lang-name {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            opacity: 0.5;
+        }
+
+        /* شاشة البدء للموبايل */
+        #start-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-grad);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .pulse-btn {
+            background: var(--primary);
+            color: white;
+            padding: 20px 45px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.5);
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+
+        /* قلوب الموبايل خفيفة الظل */
+        .heart-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            animation: flyUp 3s ease-in forwards;
+        }
+
+        @keyframes flyUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة البدء -->
+    <div id="start-overlay" onclick="startMobileShow()">
+        <button class="pulse-btn">START</button>
+    </div>
+
+    <div class="mobile-card">
+        <!-- التصميم الجديد للعداد -->
+        <div class="progress-container">
+            <div class="progress-line" id="bar"></div>
+        </div>
+        
+        <div id="love-text">Ready?</div>
+        <div id="lang-name">Language</div>
+    </div>
+
+    <a href="heart.html" class="back-btn">Back</a>
+
+    <script>
+        const loves = [
+    { t: "I Love You", l: "English" },
+    { t: "أُحبُّكِ", l: "Arabic" }, // بكسر الكاف للمؤنث
+    { t: "Seni Seviyorum", l: "Turkish" },
+    { t: "Je t'aime", l: "French" },
+    { t: "Te Amo", l: "Spanish" },
+    { t: "Ich liebe dich", l: "German" },
+    { t: "Ti amo", l: "Italian" },
+    { t: "Eu te amo", l: "Portuguese" },
+    { t: "我爱你", l: "Chinese (Wo Ai Ni)" },
+    { t: "愛してる", l: "Japanese (Aishiteru)" },
+    { t: "사랑해요", l: "Korean (Saranghaeyo)" },
+    { t: "Я тебя люблю", l: "Russian" },
+    { t: "Σ' αγαπώ", l: "Greek" },
+    { t: "Mahal kita", l: "Filipino" },
+    { t: "Szeretlek", l: "Hungarian" },
+    { t: "Kocham Cię", l: "Polish" },
+    { t: "Te iubesc", l: "Romanian" },
+    { t: "Jag älskar dig", l: "Swedish" },
+    { t: "Ik hou van jou", l: "Dutch" },
+    { t: "Jeg elsker deg", l: "Norwegian" },
+    { t: "Anh yêu em", l: "Vietnamese" }, // من رجل لامرأة
+    { t: "ผมรักคุณ", l: "Thai (Phom Rak Khun)" }, // من رجل لامرأة
+    { t: "Ek het jou lief", l: "Afrikaans" },
+    { t: "Volim te", l: "Croatian" },
+    { t: "Tave myliu", l: "Lithuanian" },
+    { t: "Miluji tě", l: "Czech" },
+    { t: "Nakupenda", l: "Swahili" }, // تصحيح: الكلمة الصحيحة هي Nakupenda
+    { t: "Ami tomake bhalobashi", l: "Bengali" },
+    { t: "Ani ohev otach", l: "Hebrew" }, // من رجل لامرأة
+    { t: "Te sakam", l: "Macedonian" },
+    { t: "Aloha wau iā ʻoe", l: "Hawaiian" },
+    { t: "Tiako ianao", l: "Malagasy" },
+    { t: "Maite zaitut", l: "Basque" },
+    { t: "S'agapo", l: "Greek" },
+    { t: "Es tevi mīlu", l: "Latvian" }
+];
+
+        let index = 0;
+        const textEl = document.getElementById('love-text');
+        const langEl = document.getElementById('lang-name');
+        const barEl = document.getElementById('bar');
+
+        function startMobileShow() {
+            document.getElementById('start-overlay').style.display = 'none';
+            playSequence();
+        }
+
+        function playSequence() {
+            if (index < loves.length) {
+                // خروج ناعم
+                textEl.style.opacity = "0";
+                textEl.style.transform = "scale(0.95)";
+                
+                setTimeout(() => {
+                    textEl.innerText = loves[index].t;
+                    langEl.innerText = loves[index].l;
+                    
+                    // تحديث شريط التقدم الجديد
+                    const progress = ((index + 1) / loves.length) * 100;
+                    barEl.style.width = progress + "%";
+
+                    // دخول ناعم
+                    textEl.style.opacity = "1";
+                    textEl.style.transform = "scale(1)";
+                    
+                    index++;
+                    setTimeout(playSequence, 1800); 
+                }, 800);
+            } else {
+                showFinal();
+            }
+        }
+
+        function showFinal() {
+            textEl.innerHTML = "I LOVE YOU";
+            textEl.style.color = "#ff4d6d";
+            langEl.innerText = "from the moon to the earth";
+            barEl.style.width = "100%";
+            setInterval(spawnHeart, 300);
+        }
+
+        function spawnHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart-particle';
+            h.innerHTML = ['❤️','💖','💕','✨'][Math.floor(Math.random()*4)];
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.top = '100vh';
+            h.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

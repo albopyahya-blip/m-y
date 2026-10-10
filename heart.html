@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --accent: #d63384;
+            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --glass: rgba(255, 255, 255, 0.28);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: var(--bg-grad); overflow: hidden; padding: 20px;
+        }
+        .card {
+            width: 100%; max-width: 460px;
+            background: var(--glass); backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 40px 25px; border-radius: 35px;
+            box-shadow: 0 20px 45px rgba(255, 77, 109, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center; z-index: 10;
+        }
+        #msg-container {
+            max-height: 70vh; overflow-y: auto; scrollbar-width: none;
+            font-size: 1.15rem; line-height: 1.6; color: #4a4a4a; text-align: center;
+        }
+        #msg-container::-webkit-scrollbar { display: none; }
+
+        #fab-container { position: fixed; bottom: 35px; right: 35px; z-index: 1000; }
+        .fab-btn {
+            width: 65px; height: 65px; background: #fff; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer; border: 3px solid var(--primary);
+        }
+        .heart {
+            position: fixed; bottom: -50px; pointer-events: none;
+            animation: floatUp linear forwards; z-index: 1;
+        }
+        @keyframes floatUp { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="msg-container">
+            <!-- ضع هنا نصك الطويل بالكامل -->
+        My queen I know I tell you that I love you every day but the truth is that those My queen I know I tell you that I love you every day but the truth is that those words will never be enough to describe what you truly mean to me You have become the brightest part of my life the first thought in my mind every morning and the last one before I close my eyes at night Every smile on your face feels like a victory to my heart and every moment with you becomes a memory I want to keep forever You are not just someone I love You are my peace my comfort and the place where my heart always feels at home No matter how hard life gets the thought of you gives me strength and reminds me that I have something truly beautiful worth fighting for I want to be the person who makes you feel safe who celebrates every success with you who holds your hand through every challenge and who never lets you face anything alone If I had the chance to live my life a thousand times I would still choose you every single time without a second thought because meeting you has been the greatest blessing I have ever received You make ordinary days feel magical and simple moments become unforgettable just because you are there I promise to keep choosing you to keep loving you and to keep reminding you every day how precious you are to me I pray that life always gives you reasons to smile and that I can be one of those reasons for the rest of our lives Because no matter where life takes us my heart will always belong to you and only you My queen my love and the most beautiful gift God has ever given me will never be enough to describe what you truly mean to me. You have become the brightest part of my life, the first thought in my mind every morning and the last one before I close my eyes at night. Every smile on your face feels like a victory to my heart, and every moment with you becomes a memory I want to keep forever. You are not just someone I love. You are my peace, my comfort, and the place where my heart always feels at home. No matter how hard life gets, the thought of you gives me strength and reminds me that I have something truly beautiful worth fighting for. I want to be the person who makes you feel safe, who celebrates every success with you, who holds your hand through every challenge, and who never lets you face anything alone. If I had the chance to live my life a thousand times, I would still choose you every single time without a second thought because meeting you has been the greatest blessing I have ever received. You make ordinary days feel magical, and simple moments become unforgettable just because you are there. I promise to keep choosing you, to keep loving you, and to keep reminding you every day how precious you are to me. I pray that life always gives you reasons to smile and that I can be one of those reasons for the rest of our lives. Because no matter where life takes us, my heart will always belong to you and only you. My queen, my love, and the most beautiful gift God has ever given me There is something I hope you always remember no matter what happens You will always be the safest place my heart has ever known Loving you is not something I do only when I say the words It is in every prayer I make every dream I have and every plan I imagine for the future because somehow every beautiful picture in my mind has you standing right beside me I love the little things about you the way you smile the way you laugh the way you tell me about your day and even the quiet moments when we do not have to say anything at all because your presence alone makes everything feel better If life ever becomes difficult I want you to know that you will never have to face it alone I want to be the one who reminds you how amazing you are whenever you forget I want to celebrate every success with you and hold your hand through every challenge because your happiness means more to me than my own Years may pass and we may grow older but I hope my eyes never stop looking at you with the same admiration and love I feel today I want to keep falling in love with you again and again every single day because you are not just the love of my life You are the reason my heart believes in forever and the most beautiful chapter that has ever been written in my story 
+        </div>
+    </div>
+
+    <!-- الوردة تنقلك لملف الأزرار -->
+    <div id="fab-container">
+        <div class="fab-btn" onclick="window.location.href='buttons.html'">🌸</div>
+    </div>
+
+    <script>
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.textContent = ['❤️','💖','🌸','✨','💕'][Math.floor(Math.random()*5)];
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (20 + Math.random()*25) + "px";
+            h.style.animationDuration = (4 + Math.random()*3) + "s";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 7000);
+        }
+        setInterval(createHeart, 450);
+    </script>
+</body>
+</html>
+        

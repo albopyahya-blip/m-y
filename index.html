@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --accent: #d63384;
+            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --glass: rgba(255, 255, 255, 0.28);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-grad);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: clamp(30px, 7vw, 50px);
+            border-radius: 35px;
+            box-shadow: 0 20px 45px rgba(255, 77, 109, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.2, 1);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.2rem, 9vw, 3.2rem);
+            margin-bottom: 25px;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .date-row { display: flex; gap: 12px; margin-bottom: 30px; }
+
+        /* إخفاء الأسهم تماماً */
+        select {
+            flex: 1;
+            padding: 15px;
+            border-radius: 18px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            text-align: center;
+        }
+
+        .main-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4);
+        }
+
+        #msg-container {
+            display: none;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding: 15px;
+            scrollbar-width: none;
+            text-align: center;
+            font-size: clamp(1.1rem, 4.5vw, 1.4rem);
+            line-height: 1.6;
+            color: #4a4a4a;
+        }
+        #msg-container::-webkit-scrollbar { display: none; }
+
+        /* قائمة الأزرار العادية - بدون هوفر */
+        #buttons-list {
+            display: none;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding: 5px;
+            scrollbar-width: none;
+        }
+        #buttons-list::-webkit-scrollbar { display: none; }
+
+        .custom-button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: #ffffff;
+            color: #d63384;
+            border: 1.5px solid #ff4d6d;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .custom-button:active {
+            background: #ffeef2;
+            transform: scale(0.98);
+        }
+
+        #fab-container {
+            position: fixed;
+            bottom: 35px; right: 35px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .fab-btn {
+            width: 65px; height: 65px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            cursor: pointer;
+            border: 3px solid var(--primary);
+        }
+
+        .heart {
+            position: fixed; bottom: -50px; pointer-events: none;
+            animation: floatUp linear forwards; z-index: 1;
+        }
+        @keyframes floatUp { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+
+        #err { color: var(--accent); font-weight: 700; margin-top: 20px; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="loginCard">
+        <h1>For My Queen</h1>
+        <div class="date-row">
+            <select id="y"><option disabled selected>Year</option></select>
+            <select id="m">
+                <option disabled selected>Month</option>
+                <option value="0">January</option><option value="1">February</option>
+                <option value="2">March</option><option value="3">April</option>
+                <option value="4">May</option><option value="5">June</option>
+                <option value="6">July</option><option value="7">August</option>
+                <option value="8">September</option><option value="9">October</option>
+                <option value="10">November</option><option value="11">December</option>
+            </select>
+            <select id="d"><option disabled selected>Day</option></select>
+        </div>
+        <button class="main-btn" onclick="validate()">Open Heart ❤️</button>
+        <p id="err">Not today, beautiful! Try again. 🌸</p>
+    </div>
+
+    <!-- مكان النص -->
+    <div class="card" id="msg-container" style="background: rgba(255,255,255,0.15);"></div>
+
+    <!-- مكان الأزرار المكتوبة يدوياً -->
+    <div class="card" id="buttons-list" style="background: rgba(255,255,255,0.15);">
+            <a href="yahya.html" class="custom-button">!!!!!!</a>
+                <a href="comedown.html" class="custom-button">Come Down</a>
+                <a href="love.html" class="custom-button">Love</a>
+                <a href="game.html" class="custom-button">Game</a>
+                <a href="queen.html" class="custom-button">Queen</a>
+                <a href="you.html" class="custom-button">for you</a>
+                <a href="yahya1.html" class="custom-button">Wipe the fog</a>
+                <a href="yahya2.html" class="custom-button">Why?</a>
+                <a href="yahya3.html" class="custom-button">Swipe Down </a>
+                <a href="yahya4.html" class="custom-button">asala</a>
+                <a href="yahya5.html" class="custom-button">maloktyyy</a>
+                <a href="yahya6.html" class="custom-button">Forever Us</a>
+                <a href="story.html" class="custom-button">story</a>
+                <a href="soon.html" class="custom-button">soon</a>
+                <a href="soon.html" class="custom-button">soon</a>
+    </div>
+
+    <!-- الزر العائم (الوردة الثابتة) -->
+    <div id="fab-container">
+        <div class="fab-btn" onclick="toggleView()">🌸</div>
+    </div>
+
+    <script>
+        // نفس منطق التاريخ الأصلي
+        const TARGET = { y: "2026", m: "5", d: "2" }; 
+        const TEXT = "My queen I know I tell you that I love you every day but the truth is that those words will never be enough to describe what you truly mean to me You have become the brightest part of my life the first thought in my mind every morning and the last one before I close my eyes at night Every smile on your face feels like a victory to my heart and every moment with you becomes a memory I want to keep forever You are not just someone I love You are my peace my comfort and the place where my heart always feels at home No matter how hard life gets the thought of you gives me strength and reminds me that I have something truly beautiful worth fighting for I want to be the person who makes you feel safe who celebrates every success with you who holds your hand through every challenge and who never lets you face anything alone If I had the chance to live my life a thousand times I would still choose you every single time without a second thought because meeting you has been the greatest blessing I have ever received You make ordinary days feel magical and simple moments become unforgettable just because you are there I promise to keep choosing you to keep loving you and to keep reminding you every day how precious you are to me I pray that life always gives you reasons to smile and that I can be one of those reasons for the rest of our lives Because no matter where life takes us my heart will always belong to you and only you My queen my love and the most beautiful gift God has ever given me.";
+
+        const yr = document.getElementById('y');
+        const dy = document.getElementById('d');
+
+        for(let i=2020; i<=2030; i++) yr.innerHTML += `<option value="${i}">${i}</option>`;
+        for(let i=1; i<=31; i++) dy.innerHTML += `<option value="${i}">${i}</option>`;
+
+        function validate() {
+            // التحقق من القيم بنفس طريقتك الأصلية
+            if(yr.value === TARGET.y && document.getElementById('m').value === TARGET.m && dy.value === TARGET.d) {
+                unlock();
+            } else {
+                document.getElementById('err').style.display = 'block';
+                setTimeout(() => document.getElementById('err').style.display = 'none', 3000);
+            }
+        }
+
+        function unlock() {
+            const login = document.getElementById('loginCard');
+            login.style.opacity = '0';
+            login.style.transform = 'translateY(-30px) scale(0.95)';
+            
+            setTimeout(() => {
+                login.style.display = 'none';
+                const msgBox = document.getElementById('msg-container');
+                msgBox.style.display = 'block';
+                msgBox.innerText = TEXT; // إظهار النص مرة واحدة
+                document.getElementById('fab-container').style.display = 'block';
+                setInterval(createHeart, 450);
+            }, 700);
+        }
+
+        let showingButtons = false;
+        function toggleView() {
+            const msgBox = document.getElementById('msg-container');
+            const btnsBox = document.getElementById('buttons-list');
+            
+            if (!showingButtons) {
+                msgBox.style.display = 'none';
+                btnsBox.style.display = 'block';
+            } else {
+                btnsBox.style.display = 'none';
+                msgBox.style.display = 'block';
+            }
+            showingButtons = !showingButtons;
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.textContent = ['❤️','💖','🌸','✨','💕'][Math.floor(Math.random()*5)];
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (20 + Math.random()*25) + "px";
+            h.style.animationDuration = (4 + Math.random()*3) + "s";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 7000);
+        }
+    </script>
+</body>
+</html>

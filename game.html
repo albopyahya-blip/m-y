@@ -1,0 +1,855 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff758f;
+            --bg: linear-gradient(to bottom, #ffdde1, #ee9ca7);
+            --glass: rgba(255, 255, 255, 0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: none; 
+        }
+
+        #ui-bar {
+            position: absolute;
+            top: 25px;
+            width: 85%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            padding: 15px 25px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: #b91d47;
+            font-weight: 600;
+        }
+
+        #player {
+            position: absolute;
+            bottom: 60px;
+            width: 75px;
+            height: 75px;
+            font-size: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .falling-heart {
+            position: absolute;
+            font-size: 28px;
+            z-index: 40;
+        }
+
+        /* شاشة النتائج */
+        #results-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 245, 247, 0.98);
+            display: none; /* مخفية في البداية */
+            flex-direction: column;
+            align-items: center;
+            z-index: 200;
+            padding: 30px 15px;
+            touch-action: auto !important; 
+            overflow-y: auto;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 35px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 1px solid #ffe5ec;
+            margin-bottom: 20px;
+        }
+
+        .card h2 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: #ff4d6d; }
+        
+        .msg-list {
+            margin-top: 20px;
+            max-height: 40vh;
+            overflow-y: auto;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch; 
+            touch-action: pan-y !important; 
+        }
+
+        .msg-bubble {
+            background: #fff5f8;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #555;
+            text-align: left;
+            border-left: 5px solid #ff758f;
+            animation: popIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .btn {
+            padding: 16px; background: #ff758f; color: white;
+            border: none; border-radius: 20px; font-weight: 700;
+            margin-top: 15px; width: 100%; cursor: pointer;
+            font-size: 1rem; display: block; text-decoration: none;
+        }
+
+        /* تنسيق زرار العودة للقائمة */
+        .btn-back {
+            background: #fff;
+            color: #ff758f;
+            border: 2px solid #ff758f;
+        }
+
+        #intro-hint {
+            position: absolute; top: 50%; color: #d63384; 
+            font-weight: 500; text-align: center; width: 100%;
+            font-size: 1.1rem; opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-bar">
+        <div id="timer">Time: 100s</div>
+        <div>Caught: <span id="score">0</span></div>
+    </div>
+
+    <div id="intro-hint">Slide to start... ✨</div>
+    <div id="player" style="left: 40%;">🌸</div>
+
+    <!-- هذه الشاشة تظهر فقط عند انتهاء الوقت -->
+    <div id="results-screen">
+        <div class="card">
+            <h2>Game Over ✨</h2>
+            <p id="total-text" style="color:#888; margin-bottom:10px;"></p>
+            
+            <div class="msg-list" id="msg-list">
+                <!-- الرسائل -->
+            </div>
+
+            <!-- الأزرار التي تظهر عند الخسارة/الانتهاء فقط -->
+            <button class="btn" onclick="location.reload()">Play Again ❤️</button>
+            <a href="heart.html" class="btn btn-back">Back</a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('player');
+        const scoreEl = document.getElementById('score');
+        const timerEl = document.getElementById('timer');
+        const resultsEl = document.getElementById('results-screen');
+        const listEl = document.getElementById('msg-list');
+        const hint = document.getElementById('intro-hint');
+        
+        let score = 0;
+        let timeLeft = 100;
+        let active = false;
+        let started = false;
+
+        // القائمة الطويلة من الرسائل (تركتها كما هي في كودك)
+           const messages = [
+                        "Your soul is beautiful ✨", "I love every detail of you ❤️",
+            "You are my favorite person 🥇", "My heart is happy with you 😊",
+            "You make life colorful 🌈", "I'm always proud of you 👏",
+            "You are my peaceful home 🏡", "Thank you for being you 🌹",
+            "I love your kind heart 💕", "You are my dream come true 🌙",
+            "Your smile is my medicine 💊", "I'll always be by your side 🤝",
+            "You are a rare diamond 💎", "My love for you grows daily 📈",
+            "You're my sweetest memory 📸", "Every second with you is a gift 🎁",
+            "I miss you when I'm with you 💭", "You are my queen 👑",
+            "Stay happy, my love 🌸", "You deserve the best world 🌎",
+            "I choose you every single day ❤️",
+"You are the best chapter of my life 📖",
+"My heart feels safe with you 🤍",
+"You are my forever favorite 🌹",
+"I smile every time I think of you 😊",
+"You make ordinary days magical ✨",
+"My happiest moments include you 🌸",
+"You complete my world 🌍",
+"I fall for you more every day 💖",
+"Your laugh is my favorite sound 🎶",
+"You are my sunshine after every storm ☀️",
+"My heart belongs to you 🔐",
+"You are the reason I believe in love 💕",
+"I'm grateful for every moment with you 🙏",
+"You make my heart race 💓",
+"I love the way you care 🌷",
+"Your happiness means everything to me 🌈",
+"You are my little miracle ✨",
+"I could stare at you forever 😍",
+"You make my soul feel alive 🌺",
+"You are my greatest blessing 💝",
+"Every day with you is unforgettable 📅",
+"I love the peace you bring 🌿",
+"You make my dreams feel real 🌙",
+"You are my favorite hello 👋",
+"My world became brighter because of you 🌞",
+"I never get tired of loving you ❤️",
+"You are the calm in my chaos 🌊",
+"My future always has you in it 💍",
+"You are my sweetest adventure 🚀",
+"I admire everything about you 🌹",
+"You are my safe place 🏡",
+"I love your beautiful soul ✨",
+"You are my reason to smile 😊",
+"My heart whispers your name 💗",
+"You are my forever home 🏠",
+"You are my favorite blessing 🙌",
+"I cherish every memory with you 📸",
+"You make my life feel complete 💞",
+"I love the sparkle in your eyes ✨",
+"You make every heartbeat meaningful 💓",
+"You are my comfort after a long day 🌙",
+"You are my greatest happiness 😄",
+"I love every little thing about you 🌼",
+"You are my lucky star ⭐",
+"My heart is always with you ❤️",
+"You make love feel effortless 💕",
+"You are my sweetest dream 🌙",
+"I adore your beautiful smile 😁",
+"My love for you has no limits ♾️",
+"You are the reason I laugh more 😂",
+"You are my favorite miracle 🌸",
+"I treasure every hug from you 🤗",
+"You make me feel special 🌹",
+"I'll never stop loving you ❤️",
+"You are my heart's favorite song 🎵",
+"My world is prettier with you 🌷",
+"I feel complete beside you 🤍",
+"You are my endless happiness ☀️",
+"I'm lucky to have you 🍀",
+"You are the best thing that happened to me 🎁",
+"I love your gentle heart 💖",
+"You are my sweetest forever 🌹",
+"Life feels softer with you 🌸",
+"You are my daily blessing 🙏",
+"You make everything worth it 💫",
+"My favorite place is beside you 🫶",
+"You make my heart bloom 🌺",
+"I love your beautiful mind 🧠",
+"You are my precious treasure 💎",
+"I always find peace in you 🌿",
+"You are my happy ending 📖",
+"You are my greatest gift 🎁",
+"I trust you with my heart 🔒",
+"My soul recognizes yours 💞",
+"You make me believe in forever ♾️",
+"You are my warmest hug 🤗",
+"You are my heart's home ❤️",
+"You inspire me every day 🌞",
+"You are my sweetest obsession 😍",
+"You light up my darkest days 💡",
+"I'll protect your heart always 🛡️",
+"You are my rainbow after rain 🌈",
+"You are everything I prayed for 🙏",
+"I feel strongest with you 💪",
+"You are my softest feeling 🤍",
+"You are the melody of my heart 🎼",
+"I love watching you smile 😊",
+"My heart dances for you 💃",
+"You are my little universe 🌌",
+"I love growing with you 🌱",
+"You are my sweetest peace 🌿",
+"I could listen to your voice forever 🎙️",
+"My favorite word is your name 💕",
+"You are my forever happiness 😍",
+"You are my reason to believe 🌟",
+"You make every morning beautiful ☀️",
+"I love how genuine you are 🌹",
+"You are my constant joy 🎉",
+"My love only grows stronger 📈",
+"You are my beautiful destiny 💫",
+"I'll always choose us 🤍",
+"You are my forever smile 😊",
+"You are my heart's greatest wish 🌠",
+"My soul smiles because of you 💖",
+"You are my sweetest comfort 🫂",
+"You make every moment magical ✨",
+"I never knew love until you ❤️",
+"You are my best decision ✔️",
+"You make my life extraordinary 🌈",
+"My heart is at peace with you 🌿",
+"You are my favorite story 📚",
+"You are the calm I searched for 🌊",
+"I love every memory we create 📸",
+"You are my little piece of heaven ☁️",
+"My heart beats your name 💓",
+"You are my brightest light 💡",
+"I treasure every second with you ⏳",
+"You are my sweetest blessing 🌹",
+"I'm thankful for your love 🙏",
+"You are my forever smile 😊",
+"My heart blooms around you 🌸",
+"You make me feel alive 💖",
+"You are my perfect person 🥰",
+"I admire your beautiful heart ❤️",
+"You make my life meaningful 🌍",
+"You are my greatest adventure 🚗",
+"My heart rests with you 🕊️",
+"I love your endless kindness 🌷",
+"You are my sunshine forever ☀️",
+"My love only belongs to you 🔐",
+"You are my sweetest escape 🌺",
+"You are my forever favorite person 💕",
+"You are my calm place 🌿",
+"I'll never stop appreciating you 🌹",
+"You make my soul glow ✨",
+"You are my dream every night 🌙",
+"You are my brightest tomorrow 🌅",
+"My love for you is timeless ⏰",
+"You are my endless inspiration 🌟",
+"You complete every missing piece 🧩",
+"I adore your gentle soul 🤍",
+"You are my safe embrace 🤗",
+"My happiness begins with you 😊",
+"You are my favorite miracle 🌈",
+"You make me feel understood 💞",
+"I cherish your love forever 🌹",
+"You are my warm sunshine ☀️",
+"I'll never let go of your hand 🤝",
+"You are my sweetest blessing 💖",
+"You make every heartbeat count 💓",
+"I love your beautiful energy ✨",
+"You are my little paradise 🌴",
+"You are the peace I prayed for 🙏",
+"My heart always finds you ❤️",
+"You make every day worth living 🌸",
+"I'll stand by you forever 🫶",
+"You are my strongest feeling 💕",
+"You make love feel easy 🌹",
+"I smile because of you 😊",
+"You are my favorite forever ♾️",
+"My heart is full because of you 💖",
+"You are my golden sunrise 🌅",
+"You make my soul peaceful 🌿",
+"You are my sweetest forever story 📖",
+"I never stop missing you 💭",
+"You are my little angel 😇",
+"You are my safe love 🤍",
+"I'll love you endlessly 🌊",
+"You are my beautiful destiny 💫",
+"I adore every little thing you do 🌸",
+"You are my endless smile 😊",
+"You are my heart's favorite person ❤️",
+"My love grows every heartbeat 💓",
+"You make life feel like magic ✨",
+"I cherish your existence 🌹",
+"You are my favorite blessing 🙏",
+"You are my reason for hope 🌈",
+"I'll always choose your heart 💖",
+"You make every hug unforgettable 🤗",
+"You are my forever happiness 🌸",
+"I love your beautiful laugh 😂",
+"You are my peaceful dream 🌙",
+"My heart feels complete with you ❤️",
+"You are my greatest joy 🌞",
+"I'm thankful for your smile 😊",
+"My heart smiles whenever you text me 📱",
+"You are the reason my soul feels light 🕊️",
+"Every path leads me back to you ❤️",
+"You are my favorite notification 🔔",
+"I love how you make me feel alive 🌸",
+"You are my once in a lifetime 💫",
+"Nothing compares to your love 💖",
+"You are my favorite forever story 📚",
+"I'd choose you in every universe 🌌",
+"You are my happiest coincidence 🍀",
+"I love every little moment with you ⏳",
+"You make my heart skip a beat 💓",
+"You are my sweetest addiction 🥹",
+"I'm proud to call you mine 🤍",
+"You are the light inside my heart ✨",
+"Every hug from you heals me 🤗",
+"You are my favorite dream come true 🌙",
+"My love for you is unconditional ❤️",
+"You make every day feel like spring 🌼",
+"You are my forever safe place 🏡",
+"Your eyes feel like home 👀",
+"I could never stop loving you 💕",
+"You make everything feel possible 🌈",
+"You are my favorite piece of happiness 😊",
+"I love every conversation with you 💬",
+"You are my biggest blessing 🙏",
+"My world begins with your smile 😍",
+"You are the melody in my heart 🎶",
+"I treasure every second beside you ⌛",
+"You are my forever comfort 🤍",
+"You make my heart bloom every day 🌹",
+"I'll never get enough of you 💖",
+"You are my greatest answered prayer 🤲",
+"I love the way you understand me 🌿",
+"You are my brightest star ⭐",
+"My favorite place will always be with you 🫂",
+"You are my beautiful forever 💞",
+"You make my soul feel complete 🌸",
+"I never imagined love could be this beautiful 💝",
+"You are my sweetest forever memory 📸",
+"I'll love you through every season 🍂",
+"You are my peaceful sunrise 🌅",
+"Your love gives me strength 💪",
+"You are the best part of my story 📖",
+"I'm happiest when I'm with you 😊",
+"You are my favorite miracle every day ✨",
+"I'll always protect your smile 🛡️",
+"You are my calm after every storm 🌊",
+"You are my reason to keep smiling 😄",
+"I adore every little thing about you 🥰",
+"You are my forever heartbeat 💓",
+"My soul found its home in you 🏡",
+"You make every goodbye harder 💭",
+"You are my sweetest hello 👋",
+"My heart whispers I love you ❤️",
+"You make love feel effortless 🌹",
+"You are my favorite blessing every morning ☀️",
+"I'm forever thankful for you 🙏",
+"You complete my happiest memories 📷",
+"You are my sunshine in human form ☀️",
+"I love the warmth of your heart 🤍",
+"You are my forever favorite smile 😊",
+"You are my lucky miracle 🍀",
+"I cherish every laugh we share 😂",
+"You make my dreams brighter 🌙",
+"You are my sweetest destiny 💫",
+"My heart beats only for you ❤️",
+"You are my daily reason to smile 🌸",
+"I'll always be your biggest supporter 👏",
+"You make my world softer 🌷",
+"You are my heart's favorite melody 🎵",
+"You are the peace I've always wanted 🌿",
+"My future looks beautiful with you 💍",
+"You are my sweetest blessing forever 💖",
+"I love your beautiful soul endlessly ✨",
+"You make me believe in forever ♾️",
+"You are my happiest chapter 📚",
+"I'd fall in love with you again ❤️",
+"You make every ordinary moment special 🌼",
+"You are my perfect adventure 🚀",
+"I'm grateful for your existence 🌹",
+"You are my safest feeling 🤍",
+"You are my greatest treasure 💎",
+"I'll never stop appreciating you 🙌",
+"You are the smile behind my smile 😊",
+"I love every heartbeat we share 💓",
+"You are my little piece of forever 🌍",
+"My heart belongs nowhere else ❤️",
+"You make silence feel comfortable 🌙",
+"You are my sweetest escape 🌸",
+"I'm lucky because I found you 🍀",
+"You are my favorite kind of magic ✨",
+"You make my life shine brighter 💡",
+"You are my endless source of joy 😍",
+"I'll never stop choosing you 🤍",
+"You are my beautiful miracle 🌹",
+"My heart feels full because of you 💖",
+"You are my forever safe hug 🤗",
+"I cherish your beautiful heart ❤️",
+"You make every day unforgettable 📅",
+"You are my sweetest promise 💍",
+"I love growing old with you 🌿",
+"You are my constant happiness 😊",
+"My soul thanks yours every day 🙏",
+"You are the love I always hoped for 💕",
+"You are my reason to dream bigger 🌠",
+"I'll hold your hand forever 🤝",
+"You are my favorite person in every lifetime ♾️",
+"You make my heart glow ✨",
+"You are my peaceful forever 🌸",
+"I adore the way you laugh 😂",
+"You are my home wherever we are 🏡",
+"I love your beautiful imperfections 💖",
+"You make my heart feel young 🌷",
+"You are my sweetest forever gift 🎁",
+"My love for you knows no end 🌊",
+"You are my beautiful reason ❤️",
+"I'll always find my way to you 🧭",
+"You are my forever sunshine ☀️",
+"You make my soul dance 💃",
+"You are my sweetest dream every night 🌙",
+"My heart is safest with you 🤍",
+"You are my greatest joy every day 😊",
+"I'll keep loving you endlessly 💕",
+"You are my little miracle forever ✨",
+"You make life worth celebrating 🎉",
+"You are my forever blessing 🌹",
+"I love every little smile you give me 😍",
+"You are my favorite heartbeat 💓",
+"My world feels complete with you 🌍",
+"You are my beautiful beginning 🌅",
+"I'll always treasure you 💎",
+"You are my soft place to land 🕊️",
+"I love every memory we build 📸",
+"You are my brightest tomorrow ☀️",
+"You make every hug unforgettable 🤗",
+"You are my forever inspiration 🌟",
+"My soul belongs beside yours ❤️",
+"You are my sweetest comfort zone ",
+"I'm endlessly grateful for you 🙏",
+"You are my favorite hello and hardest goodbye 👋",
+"My heart chooses you every time 💖",
+"You make every sunset more beautiful 🌇",
+"You are my endless smile 😊",
+"I love every little habit of yours 🥹",
+"You are my forever happiness 🌈",
+"You make my heart feel at home 🏡",
+"You are my precious angel 😇",
+"I'll stand beside you always 🤍",
+"You are my sweetest forever love ❤️",
+"My favorite future includes you 💍",
+"You make my soul sparkle ✨",
+"You are my greatest adventure yet 🚗",
+"I'll never stop believing in us 🌹",
+"You are my reason to stay strong 💪",
+"My heart is forever yours 🔒",
+"You make every moment priceless 💝",
+"You are my beautiful forever home 🏠",
+"I love your heart more every day 💕",
+"You are my sweetest peace 🌿",
+"You'll always be my favorite person 🥇",
+"My love grows with every sunrise 🌅",
+"You are my endless source of peace 🕊️",
+"You make my heart feel infinite ♾️",
+"You are the answer to my prayers 🙏",
+"I'll love you beyond forever ❤️",
+"You are my favorite blessing to wake up to ☀️",
+"My heart only knows your name 💓",
+"You make every dream sweeter 🌙",
+"You are my forever safe harbor ⚓",
+"I adore your beautiful soul every day ✨",
+"You are my happiest forever 💖",
+"I'll always love the way you love me 🤍",
+"You are my once and always ❤️",
+"My world is brighter because of you 🌞",
+"You are my favorite miracle in life ",
+"I'll keep choosing you forever 💍",
+"You are my endless reason to smile 😊",
+"My soul found its missing piece in you 🧩",
+"You are my sweetest forever wish 🌠",
+"I'll never stop falling for you 💕",
+"You are the calm my heart needed 🌿",
+"My forever starts and ends with you ❤️",
+"You are my favorite thought every morning ☀️",
+"My day starts with thoughts of you ❤️",
+"You make my heart feel weightless 🕊️",
+"You are the reason I believe in forever ♾️",
+"I love getting lost in your eyes 👀",
+"You make every heartbeat feel special 💓",
+"You are my peaceful escape 🌿",
+"My soul feels complete beside yours 🤍",
+"You are the most beautiful part of my life 🌹",
+"I never stop thinking about you 💭",
+"You are my sweetest surprise 🎁",
+"I'd cross any distance for you 🌍",
+"Your love is my favorite feeling 💖",
+"You make my heart laugh 😊",
+"I love every second I spend with you ⏳",
+"You are my favorite chapter to read 📖",
+"My world became brighter the day we met ✨",
+"You make my soul shine ⭐",
+"You are my forever comfort zone 🏡",
+"I'll always find happiness in you ",
+"You are my greatest inspiration 🌟",
+"Your smile lights up my universe 🌌",
+"I love every tiny detail about you 🥰",
+"You are my beautiful forever dream 🌙",
+"My heart feels lucky because of you 🍀",
+"You are my favorite place to be 🤗",
+"I could never replace you ❤️",
+"You are my sweetest obsession 💕",
+"Life makes sense with you 🌈",
+"You are the peace I never knew I needed 🌿",
+"My heart smiles when you smile 😊",
+"You are my beautiful safe haven ⚓",
+"I love your gentle soul 🤍",
+"You are my forever favorite hello 👋",
+"My love for you is limitless 🌊",
+"You make every ordinary day extraordinary ✨",
+"You are my warmest memory 📸",
+"My heart only feels complete with you 💓",
+"You are my favorite kind of happiness 😍",
+"I'll keep choosing your heart ❤️",
+"You are my brightest tomorrow 🌅",
+"Every love song reminds me of you 🎵",
+"You are my sweetest forever promise 💍",
+"My soul rests in your presence 🕊️",
+"You are my daily sunshine ☀️",
+"I cherish every smile you give me 😊",
+"You are my biggest adventure 🚀",
+"I'll never stop admiring you 🌹",
+"You make my life bloom ",
+"You are my forever lucky charm 🍀",
+"I love your beautiful laugh 😂",
+"You are my heart's home forever 🏡",
+"My favorite dream is you 🌙",
+"You make every moment unforgettable 💫",
+"You are my forever reason to believe ❤️",
+"I love how safe I feel with you 🤍",
+"You are my sweetest forever hug 🤗",
+"My heart found its rhythm with you 🎶",
+"You are my calmest place 🌿",
+"I'd relive every memory with you 📷",
+"You are my forever treasure 💎",
+"You make my soul feel free 🕊️",
+"You are the light I never want to lose ✨",
+"I'm endlessly thankful for your love 🙏",
+"You are my forever favorite miracle 🌸",
+"My heart celebrates you every day 🎉",
+"You are my happiest destination 🧭",
+"I'll always make room for you in my heart ❤️",
+"You are my sweetest peace of mind 🌿",
+"My love for you grows without limits 📈",
+"You make me believe in impossible things 🌠",
+"You are my forever joy 😊",
+"I love watching you be yourself 💖",
+"You are my beautiful beginning and ending ♾️",
+"My heart is happiest around you 🥹",
+"You are my favorite reason to stay strong 💪",
+"I adore every little thing you do 🌷",
+"You are my softest goodbye and favorite hello 👋",
+"My soul chose yours long ago 🤍",
+"You are my forever heartbeat 💓",
+"I'll always be grateful for us ❤️",
+"You make every hug feel magical 🤗",
+"You are my favorite blessing every night 🌙",
+"My heart trusts yours completely 🔒",
+"You are my sunshine even in the rain ☔",
+"I love the peace in your eyes 👀",
+"You are my forever smile 😊",
+"You make every memory golden 🌅",
+"You are my sweetest homecoming 🏡",
+"I could spend forever talking to you 💬",
+"You are my daily miracle ✨",
+"My favorite forever is with you 💍",
+"You are my strongest weakness ❤️",
+"I'll love every version of you 💖",
+"You are my safe little world 🌍",
+"My heart belongs where you are 🤍",
+"You make life taste sweeter 🍯",
+"You are my forever dreamer 🌙",
+"I never knew peace until I met you 🌿",
+"You are my reason to believe in magic ✨",
+"My happiest future has you in it 🥰",
+"You are my sweetest memory to keep 📸",
+"I'll always protect your heart 🛡️",
+"You are my favorite person to miss 💭",
+"My soul is happiest beside yours 🕊️",
+"You are my brightest blessing ☀️",
+"You make my heart dance 🎶",
+"I'll never stop appreciating your love 🌹",
+"You are my forever answer ❤️",
+"My life feels complete with your love 💕",
+"You are my favorite piece of forever ♾️",
+"I'll always choose your happiness 😊",
+"You are my greatest comfort 🤍",
+"My heart shines because of you ✨",
+"You are my sweetest forever smile ",
+"I love everything we are together 💖",
+"You are my reason to hope 🌈",
+"My forever starts every time I see you 👀",
+"You are my happiest memory 📷",
+"I cherish your beautiful heart ❤️",
+"You are my favorite feeling 🌷",
+"My soul thanks God for you 🙏",
+"You are my forever person 🥹",
+"I'll never stop falling in love with you 💓",
+"You are my brightest wish 🌠",
+"You make every morning worth waking up ☀️",
+"My love belongs only to you 🔐",
+"You are my little paradise 🌴",
+"I'm happiest in your arms 🤗",
+"You are my sweetest dream to chase 🌙",
+"My heart knows only your love ❤️",
+"You are my beautiful forever gift 🎁",
+"I'll always be proud of us 👏",
+"You make every day worth remembering 📖",
+"You are my forever source of happiness 😊",
+"I love your beautiful spirit ✨",
+"You are my warmest hug 🤍",
+"My favorite forever begins with you 💍",
+"You make my soul feel colorful 🌈",
+"You are my endless motivation 💪",
+"I'll always celebrate your existence 🎉",
+"You are my calmest heartbeat 💓",
+"My world is softer because of you ",
+"You are my forever favorite blessing 🙏",
+"I love your kind soul 💕",
+"You make my life sparkle ✨",
+"You are my forever sunshine 🌞",
+"I'd never trade your love for anything ❤️",
+"You are my sweetest adventure 🚗",
+"My heart smiles every time I see you 😊",
+"You are my forever peace 🌿",
+"I'll love you in every lifetime ♾️",
+"You are my favorite dream come alive 🌙",
+"My soul feels at home with you 🏡",
+"You are my greatest gift 💝",
+"I'll never stop believing in us 🤍",
+"You make every heartbeat meaningful 💓",
+"You are my favorite miracle every day 🌹",
+"My heart feels safe in your hands 🤲",
+"You are my endless happiness 🌈",
+"I'll keep loving you with all I have ❤️",
+"You are my forever favorite person 🥇",
+"You make my life beautiful every day ",
+"My heart has only one home, and it's you 🏠",
+"You are my sweetest forever song 🎵",
+"I'll stand by your side forever 🤝",
+"You are my favorite chapter of life 📚",
+"My soul blooms because of you ",
+"You are my brightest reason to smile 😊",
+"I'll never stop holding onto us 💖",
+"You are my forever fairytale ✨",
+"My heart whispers your name every day 💭",
+"You are my greatest source of peace 🌿",
+"I love every adventure with you 🚀",
+"You are my forever lucky star ⭐",
+"My happiness begins and ends with you ❤️",
+"You are my sweetest forever wish 🌠",
+"I'll always treasure your heart 💎",
+"You are my favorite hello forever 👋",
+"My love is stronger because of you 💪",
+"You are my forever blessing 🌹",
+"I'm thankful for every moment with you 🙏",
+"You are my endless source of love 💕",
+"My world became perfect when you arrived 🌍",
+"You are my forever smile 😊",
+"My soul will always choose yours 🤍",
+"You are my favorite forever ❤️",
+"You are my greatest blessing every day 🌹",
+"I'm lucky that love brought me to you 🍀",
+"You are my favorite part of every day ☀️",
+"My heart thanks you for existing 💖",
+"You are my beautiful forever person 🤍",
+"You make my life feel complete 🌈",
+"You are my endless fairytale 📖",
+"I'll always call you my home 🏡",
+"You are my favorite reason to smile 😊",
+"You are my forever and always ❤️",
+"You are my sweetest home 🏡",
+"My heart will always find yours 💕",
+"You make every moment shine ✨",
+"I'll keep loving you forever ♾️",
+"You are my favorite miracle 🌹",
+"You are my endless peace 🌿",
+"You make my life beautiful ",
+"My forever begins with you 💍",
+            "My love is endless for you 🌊", "You are my lucky charm 🍀",
+            "You are my soft melody 🎵", "Everything is better with you ✨",
+            "I love the way you think 🧠", "You are my secret joy 💖",
+            "You shine like the stars ⭐", "You are my life's blessing 🙏",
+            "I'm yours and only yours 🔒", "Your hug is my favorite place 🤗"
+        ];
+
+
+        function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+        function start() {
+            if (started) return;
+            started = true;
+            active = true;
+            hint.style.display = 'none';
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = `Time: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    end();
+                }
+            }, 1000);
+        }
+
+        const move = (e) => {
+            if (timeLeft <= 0) return;
+            start();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - player.offsetWidth / 2;
+            if (x < 0) x = 0;
+            if (x > window.innerWidth - player.offsetWidth) x = window.innerWidth - player.offsetWidth;
+            player.style.left = x + 'px';
+        };
+
+        document.addEventListener('touchmove', move, { passive: false });
+        document.addEventListener('mousemove', move);
+
+        function spawn() {
+            if (!active) return;
+            const h = document.createElement('div');
+            h.className = 'falling-heart';
+            h.textContent = ['❤️', '💖', '💕', '✨', '🌸'][Math.floor(Math.random() * 5)];
+            h.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            h.style.top = '-50px';
+            document.body.appendChild(h);
+
+            let top = -50;
+            let speed = 2.5 + Math.random() * 1.5;
+
+            const fall = setInterval(() => {
+                top += speed;
+                h.style.top = top + 'px';
+                const pRect = player.getBoundingClientRect();
+                const hRect = h.getBoundingClientRect();
+
+                if (hRect.bottom >= pRect.top + 15 && hRect.left >= pRect.left - 10 && hRect.right <= pRect.right + 10) {
+                    score++;
+                    scoreEl.textContent = score;
+                    h.remove();
+                    clearInterval(fall);
+                }
+                if (top > window.innerHeight || !active) {
+                    h.remove();
+                    clearInterval(fall);
+                }
+            }, 20);
+        }
+
+        function end() {
+            active = false;
+            document.body.style.touchAction = "auto";
+            document.body.style.overflow = "auto";
+
+            // إظهار شاشة النتائج (التي تحتوي على زر العودة)
+            resultsEl.style.display = 'flex';
+
+            document.getElementById('total-text').textContent = `You gathered ${score} hearts!`;
+            const sessionMessages = shuffle([...messages]).slice(0, score);
+
+            sessionMessages.forEach((m, i) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'msg-bubble';
+                    div.textContent = `🌸 ${m}`;
+                    listEl.appendChild(div);
+                    listEl.scrollTop = listEl.scrollHeight;
+                }, i * 350);
+            });
+        }
+
+        setInterval(spawn, 900);
+    </script>
+</body>
+</html>

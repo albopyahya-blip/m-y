@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Queen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --glass: rgba(255, 255, 255, 0.22);
+            --text-color: #4a4a4a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-grad);
+            overflow: hidden; /* لمنع اهتزاز الصفحة */
+            padding: 15px;
+        }
+
+        /* الطبقة اللامعة في الخلفية */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.2; pointer-events: none;
+        }
+
+        /* البطاقة الاحترافية */
+        .content-card {
+            width: 100%;
+            max-width: 550px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: clamp(25px, 6vw, 45px);
+            border-radius: 35px;
+            box-shadow: 0 25px 50px rgba(255, 77, 109, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: fadeIn 1.2s ease-out forwards;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* تضمن عدم خروج البطاقة من الشاشة */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* عنوان اختياري */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.8rem, 7vw, 2.8rem);
+            color: #d63384;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* حاوية النص الطويل */
+        .text-wrapper {
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: none; /* إخفاء السكرول في فيرفوكس */
+            text-align: center;
+        }
+
+        .text-wrapper::-webkit-scrollbar {
+            display: none; /* إخفاء السكرول في كروم وسفاري */
+        }
+
+        .text-content {
+            font-size: clamp(1rem, 4.2vw, 1.35rem);
+            line-height: 1.8;
+            color: var(--text-color);
+            font-weight: 500;
+            white-space: pre-line; /* يحترم المسافات والأسطر الجديدة */
+            padding-bottom: 10px;
+        }
+
+        /* القلوب المتحركة */
+        .heart {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            animation: floatUp linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            to { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+        }
+        /* تنسيق زرار العودة الجديد */
+        .back-btn {
+            display: inline-block;
+            margin: 20px auto 0 auto; /* مسافة من الأعلى وتوسيط */
+            padding: 12px 40px;
+            background: #d63384; /* لون وردي غامق متناسق مع العنوان */
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(214, 51, 132, 0.2);
+            align-self: center; /* لتوسيطه داخل الـ flex container */
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div class="content-card">
+        <h1>My Queen</h1>
+        
+        <div class="text-wrapper">
+            <div class="text-content">
+I don't think I'll ever find enough words to describe what you truly mean to me because every time I try to write about you I realize that my heart feels so much more than my words could ever explain You have become the most beautiful part of my life in a way I never expected Before you my days simply passed Now every day feels special because somehow every moment reminds me of you
+
+You are the first thought that crosses my mind when I wake up and the last one before I fall asleep Whenever something good happens you're the first person I want to tell Whenever life feels heavy your voice is the only thing that can calm my heart You don't even realize how much peace you bring into my life just by existing
+
+I love the way you smile the way you laugh the way you care the way you listen and even the little things you probably don't notice about yourself Those little things are the reasons I fall in love with you more every single day Sometimes I catch myself smiling for no reason and then I realize it's because I was thinking about you
+
+You have changed me in the most beautiful way You taught me that love isn't just saying I love you Love is choosing the same person every single day Love is praying for someone before praying for yourself Love is finding happiness in someone else's smile Love is feeling at home whenever they're near That's exactly what you became to me home
+
+I don't promise you a life without problems because no one can promise that But I promise that whatever life brings us I will never stop standing beside you I will always choose understanding over pride communication over silence and us over everything else because what we have is too precious for me to ever take for granted
+
+Sometimes I imagine us years from now sitting together and reading these messages I imagine us smiling laughing and realizing that every word I wrote was true I hope that no matter how much time passes I will still look at you with the same admiration I have today Actually I hope I love you even more than I do now
+
+I want to celebrate every success with you hold your hand through every challenge make you laugh after every hard day and remind you every single morning that you are deeply loved I want to be the person you can always run to without fear without hesitation because my heart will always have a place that belongs only to you
+
+There will probably be days when life becomes difficult days when we're tired stressed or overwhelmed But even on those days I hope you never forget one thing you will never have to face anything alone As long as I'm here you'll always have someone who believes in you supports you and loves you with everything he has
+
+Every prayer I make somehow includes your name I ask God to protect your heart to keep your smile bright to bless your dreams and to give you more happiness than you could ever imagine Seeing you happy has become one of the greatest joys of my life
+
+If someone asked me what the greatest blessing I've ever received is I wouldn't need a second to think My answer would always be you because meeting you didn't just change my life it changed me You made me believe that love can be peaceful gentle patient and real
+
+And if one day you ever wonder how much I love you don't count the words in this letter Count the moments I chose you without hesitation the prayers I whispered with your name in them the smiles you gave me without even trying and the future I keep dreaming about with you in every single part of it
+
+This isn't the end of a letter It's simply another reminder that no matter how much time passes no matter how busy life gets and no matter how many seasons come and go my heart will continue choosing you again and again because you are not just the love of my life you are my safest place my favorite person my answered prayer my greatest blessing and the most beautiful chapter my heart will ever write
+
+I love you today more than yesterday and I already know I'll love you even more tomorrow
+
+            </div>
+        </div>
+                <a href="heart.html" class="back-btn">Back</a>
+
+    </div>
+
+    <script>
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.textContent = ['❤️','💖','🌸','✨','💕'][Math.floor(Math.random()*5)];
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (18 + Math.random()*22) + "px";
+            h.style.animationDuration = (4 + Math.random()*4) + "s";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 8000);
+        }
+
+        setInterval(createHeart, 450);
+    </script>
+</body>
+</html>
