@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Love</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -18,6 +18,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
+            min-height: 100dvh;
             background: var(--bg);
             overflow: hidden;
             display: flex;
@@ -28,8 +29,8 @@
 
         #ui-bar {
             position: absolute;
-            top: 25px;
-            width: 85%;
+            top: max(14px, env(safe-area-inset-top));
+            width: min(92%, 560px);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -45,10 +46,10 @@
 
         #player {
             position: absolute;
-            bottom: 60px;
-            width: 75px;
-            height: 75px;
-            font-size: 60px;
+            bottom: max(24px, env(safe-area-inset-bottom));
+            width: clamp(60px, 18vw, 75px);
+            height: clamp(60px, 18vw, 75px);
+            font-size: clamp(46px, 14vw, 60px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -128,16 +129,23 @@
         }
 
         #intro-hint {
-            position: absolute; top: 50%; color: #d63384; 
-            font-weight: 500; text-align: center; width: 100%;
+            position: absolute; top: 50%; color: #d63384;
+            font-weight: 500; text-align: center; width: 100%; padding: 0 16px;
             font-size: 1.1rem; opacity: 0.8;
+        }
+        @media (max-width: 480px) {
+            #ui-bar { padding: 12px 16px; border-radius: 20px; }
+            #results-screen { padding: max(18px, env(safe-area-inset-top)) 12px; }
+            .card { padding: 22px 18px; border-radius: 28px; }
+            .card h2 { font-size: 2.4rem; }
+            .msg-list { max-height: 38dvh; }
         }
     </style>
 </head>
 <body>
 
     <div id="ui-bar">
-        <div id="timer">Time: 100s</div>
+        <div id="timer">Time: 30s</div>
         <div>Caught: <span id="score">0</span></div>
     </div>
 
@@ -169,7 +177,7 @@
         const hint = document.getElementById('intro-hint');
         
         let score = 0;
-        let timeLeft = 100;
+        let timeLeft = 30;
         let active = false;
         let started = false;
 

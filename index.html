@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Love</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -22,7 +22,8 @@
             justify-content: center;
             align-items: center;
             background: var(--bg-grad);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             padding: 20px;
         }
 
@@ -100,31 +101,55 @@
         /* قائمة الأزرار العادية - بدون هوفر */
         #buttons-list {
             display: none;
-            max-height: 65vh;
+            max-height: 75vh;
             overflow-y: auto;
             padding: 5px;
             scrollbar-width: none;
         }
         #buttons-list::-webkit-scrollbar { display: none; }
 
-        .custom-button {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            background: #ffffff;
-            color: #d63384;
-            border: 1.5px solid #ff4d6d;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            text-align: center;
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
         }
-
-        .custom-button:active {
-            background: #ffeef2;
-            transform: scale(0.98);
+        .square-button {
+            aspect-ratio: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border: 1px solid rgba(214, 51, 132, .22);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(255,239,245,.92));
+            box-shadow: 0 7px 16px rgba(174,54,100,.09), inset 0 1px 0 #fff;
+            color: #c92f78;
+            font-size: clamp(11px, 3vw, 14px);
+            font-weight: 600;
+            line-height: 1.25;
+            text-align: center;
+            text-decoration: none;
+            overflow-wrap: anywhere;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+        .square-button:hover, .square-button:focus-visible {
+            transform: translateY(-3px);
+            border-color: rgba(214,51,132,.55);
+            box-shadow: 0 12px 22px rgba(174,54,100,.16);
+            outline: none;
+        }
+        .square-button:active { transform: scale(.97); }
+        @media (max-width: 480px) {
+            body { padding: 14px; align-items: center; }
+            .card { padding: 26px 20px; border-radius: 28px; }
+            .date-row { gap: 8px; }
+            select { min-width: 0; padding: 13px 6px; font-size: 13px; }
+            #msg-container, #buttons-list { max-height: 72dvh; }
+            .button-grid { gap: 9px; }
+            .square-button { border-radius: 15px; padding: 6px; }
+            #fab-container { right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); }
+            .fab-btn { width: 56px; height: 56px; font-size: 26px; }
         }
 
         #fab-container {
@@ -182,21 +207,24 @@
 
     <!-- مكان الأزرار المكتوبة يدوياً -->
     <div class="card" id="buttons-list" style="background: rgba(255,255,255,0.15);">
-            <a href="yahya.html" class="custom-button">!!!!!!</a>
-                <a href="comedown.html" class="custom-button">Come Down</a>
-                <a href="love.html" class="custom-button">Love</a>
-                <a href="game.html" class="custom-button">Game</a>
-                <a href="queen.html" class="custom-button">Queen</a>
-                <a href="you.html" class="custom-button">for you</a>
-                <a href="yahya1.html" class="custom-button">Wipe the fog</a>
-                <a href="yahya2.html" class="custom-button">Why?</a>
-                <a href="yahya3.html" class="custom-button">Swipe Down </a>
-                <a href="yahya4.html" class="custom-button">asala</a>
-                <a href="yahya5.html" class="custom-button">maloktyyy</a>
-                <a href="yahya6.html" class="custom-button">Forever Us</a>
-                <a href="story.html" class="custom-button">story</a>
-                <a href="soon.html" class="custom-button">soon</a>
-                <a href="soon.html" class="custom-button">soon</a>
+<nav class="button-grid" aria-label="Pages">
+            <a class="square-button" href="yahya.html">!!!!!!</a>
+            <a class="square-button" href="comedown.html">Come Down</a>
+            <a class="square-button" href="love.html">Love</a>
+            <a class="square-button" href="game.html">Game</a>
+            <a class="square-button" href="queen.html">Queen</a>
+            <a class="square-button" href="you.html">for you</a>
+            <a class="square-button" href="yahya1.html">Wipe the fog</a>
+            <a class="square-button" href="yahya2.html">Why?</a>
+            <a class="square-button" href="yahya3.html">Swipe Down </a>
+            <a class="square-button" href="yahya4.html">asala</a>
+            <a class="square-button" href="yahya5.html">maloktyyy</a>
+            <a class="square-button" href="yahya6.html">Forever Us</a>
+            <a class="square-button" href="story.html">story</a>
+            <a class="square-button" href="soon.html">soon</a>
+            <a class="square-button" href="soon.html">soon</a>
+            <a class="square-button" href="puzzle.html">Puzzle 🧩</a>
+            </nav>
     </div>
 
     <!-- الزر العائم (الوردة الثابتة) -->

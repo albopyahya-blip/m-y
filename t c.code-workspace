@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "t c",
+			"path": ".."
+		},
+		{
+			"name": "HTML & CSS",
+			"path": "../../HTML & CSS"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "t c"
+	}
+}

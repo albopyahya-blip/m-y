@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Our Little Puzzle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --pink:#ff4d6d; --berry:#c92f78; }
+        * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+        body {
+            min-height:100vh; min-height:100dvh; padding:20px 14px;
+            display:flex; justify-content:center; align-items:center;
+            font-family:'Poppins',sans-serif; color:#71334f;
+            background:radial-gradient(ellipse at 14% 12%,rgba(255,255,255,.65),transparent 34%),
+                       radial-gradient(ellipse at 90% 88%,rgba(255,255,255,.45),transparent 32%),
+                       linear-gradient(135deg,#ff9a9e,#fecfef);
+        }
+        .card {
+            width:min(100%,620px); padding:clamp(18px,4vw,30px);
+            border:1px solid rgba(255,255,255,.75); border-radius:30px;
+            background:rgba(255,255,255,.5); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+            box-shadow:0 24px 60px rgba(174,54,100,.18),inset 0 1px 0 rgba(255,255,255,.75);
+            text-align:center;
+        }
+        h1 { margin-bottom:5px; color:var(--berry); font:700 clamp(2rem,7vw,2.65rem) 'Dancing Script',cursive; }
+        .hint { margin-bottom:12px; color:#86556c; font-size:.9rem; }
+        .canvas-wrap { width:min(100%,540px); margin:0 auto; }
+        #puzzle {
+            display:block; width:100%; height:auto; border-radius:17px;
+            touch-action:none; user-select:none; -webkit-user-select:none;
+            filter:drop-shadow(0 12px 22px rgba(149,44,85,.12));
+        }
+        #status { min-height:22px; margin-top:7px; color:#86556c; font-size:.8rem; }
+        #message-stage { display:none; padding:6px 0 2px; }
+        #message-stage h2 { margin:7px 0; color:var(--berry); font-size:1.2rem; }
+        #message-stage p { margin-bottom:16px; color:#86556c; font-size:.9rem; }
+        .back-link {
+            width:100%; min-height:50px; padding:11px 15px; border-radius:16px;
+            font:600 .92rem 'Poppins',sans-serif; text-decoration:none;
+        }
+        #chosen-message {
+            max-height:58svh; overflow:auto; margin:12px 0; padding:clamp(18px,5vw,28px);
+            border:1px solid rgba(214,51,132,.14); border-radius:20px;
+            background:rgba(255,255,255,.86); color:#6f3a55;
+            font-size:clamp(.94rem,3.8vw,1.12rem); font-weight:500;
+            line-height:1.8; text-align:left; box-shadow:0 10px 26px rgba(174,54,100,.1);
+            -webkit-overflow-scrolling:touch;
+        }
+        .back-link {
+            display:flex; align-items:center; justify-content:center; margin-top:13px;
+            border:1px solid rgba(201,47,120,.28); background:rgba(255,255,255,.72); color:var(--berry);
+        }
+        @media (max-width:600px) and (orientation:portrait) {
+            body { padding:12px 10px; }
+            .card { padding:16px 12px; border-radius:24px; }
+            .canvas-wrap { width:min(100%, calc((100svh - 185px) / 2)); }
+            .hint { margin-bottom:7px; font-size:.8rem; }
+            #status { margin-top:4px; font-size:.72rem; }
+        }
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms !important; } }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <section id="puzzle-stage">
+            <h1>Our Little Puzzle 🧩</h1>
+            <p class="hint">Drag each piece into its place to complete the picture.</p>
+            <div class="canvas-wrap"><canvas id="puzzle" width="600" height="1200" aria-label="Drag and drop the jigsaw pieces into the picture"></canvas></div>
+            <p id="status" aria-live="polite">Loading picture…</p>
+        </section>
+        <section id="message-stage" aria-live="polite">
+            <h1>A message for you ❤️</h1>
+            <div id="chosen-message" role="status"></div>
+        </section>
+        <a class="back-link" href="buttons.html">Back to the pages 🌸</a>
+    </main>
+    <script>
+        const canvas = document.getElementById('puzzle');
+        const ctx = canvas.getContext('2d');
+        const image = new Image();
+        const N = 4, CELL = 120, DEPTH = 14, BOARD_X = 60, BOARD_Y = 40;
+        const BOARD_SIZE = N * CELL, PIECE_SIZE = CELL + 2 * DEPTH;
+        const TRAY_Y = 556, TRAY_STEP = 153;
+        const horizontal = Array.from({length:N-1}, () => Array.from({length:N}, () => Math.random() < .5 ? -1 : 1));
+        const vertical = Array.from({length:N}, () => Array.from({length:N-1}, () => Math.random() < .5 ? -1 : 1));
+        const pieces = [];
+        let activePiece = null, dragOffsetX = 0, dragOffsetY = 0, solvedCount = 0;
+        function makePath(row, col) {
+            const path = new Path2D();
+            const x0 = DEPTH, y0 = DEPTH, x1 = DEPTH + CELL, y1 = DEPTH + CELL;
+            const top = row === 0 ? 0 : -horizontal[row-1][col];
+            const right = col === N-1 ? 0 : vertical[row][col];
+            const bottom = row === N-1 ? 0 : horizontal[row][col];
+            const left = col === 0 ? 0 : -vertical[row][col-1];
+            const edges = [
+                [x0,y0,x1,y0,0,-1,top], [x1,y0,x1,y1,1,0,right],
+                [x1,y1,x0,y1,0,1,bottom], [x0,y1,x0,y0,-1,0,left]
+            ];
+            path.moveTo(x0,y0);
+            for (const [sx,sy,ex,ey,nx,ny,sign] of edges) {
+                for (let step=1; step<=48; step++) {
+                    const t = step/48;
+                    const u = (t-.34)/.32;
+                    const profile = sign && u > 0 && u < 1 ? Math.sin(Math.PI*u) ** 2 : 0;
+                    path.lineTo(sx+(ex-sx)*t+nx*DEPTH*sign*profile, sy+(ey-sy)*t+ny*DEPTH*sign*profile);
+                }
+            }
+            path.closePath();
+            return path;
+        }
+        function trayPosition(slot) {
+            const row = Math.floor(slot/N), col = slot%N;
+            const colWidth = canvas.width/N;
+            return {x:colWidth*col+(colWidth-PIECE_SIZE)/2, y:TRAY_Y+row*TRAY_STEP};
+        }
+        function buildPieces() {
+            const order = Array.from({length:N*N},(_,i)=>i);
+            for (let i=order.length-1; i>0; i--) {
+                const j = Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]];
+            }
+            order.forEach((cellIndex,slot) => {
+                const row=Math.floor(cellIndex/N), col=cellIndex%N, home=trayPosition(slot);
+                pieces.push({row,col,x:home.x,y:home.y,homeX:home.x,homeY:home.y,path:makePath(row,col),placed:false});
+            });
+        }
+        function drawBoard() {
+            ctx.save();
+            ctx.fillStyle='rgba(255,255,255,.48)';
+            ctx.beginPath(); ctx.roundRect(BOARD_X-7,BOARD_Y-7,BOARD_SIZE+14,BOARD_SIZE+14,16); ctx.fill();
+            for(let row=0;row<N;row++) for(let col=0;col<N;col++) {
+                const targetPath=makePath(row,col), x=BOARD_X+col*CELL-DEPTH, y=BOARD_Y+row*CELL-DEPTH;
+                ctx.save(); ctx.translate(x,y); ctx.fillStyle='rgba(255,255,255,.35)'; ctx.fill(targetPath);
+                ctx.strokeStyle='rgba(201,47,120,.2)'; ctx.lineWidth=2; ctx.setLineDash([5,5]); ctx.stroke(targetPath); ctx.restore();
+            }
+            ctx.restore();
+            ctx.fillStyle='rgba(255,255,255,.34)'; ctx.beginPath(); ctx.roundRect(8,TRAY_Y-18,canvas.width-16,canvas.height-TRAY_Y+8,18); ctx.fill();
+            ctx.fillStyle='#a45b7a'; ctx.font='600 13px Poppins, sans-serif'; ctx.textAlign='center'; ctx.fillText('PUZZLE PIECES',canvas.width/2,TRAY_Y-2);
+        }
+        function drawPiece(piece, dragging=false) {
+            ctx.save(); ctx.translate(piece.x,piece.y);
+            ctx.shadowColor=dragging?'rgba(120,35,75,.28)':'rgba(120,35,75,.12)'; ctx.shadowBlur=dragging?18:8; ctx.shadowOffsetY=dragging?7:3;
+            ctx.save(); ctx.clip(piece.path);
+            ctx.drawImage(image,DEPTH-piece.col*CELL,DEPTH-piece.row*CELL,BOARD_SIZE,BOARD_SIZE);
+            ctx.restore();
+            ctx.shadowColor='transparent'; ctx.strokeStyle='rgba(255,255,255,.96)'; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.stroke(piece.path);
+            ctx.restore();
+        }
+        function render() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            drawBoard();
+            pieces.filter(p=>p!==activePiece).forEach(p=>drawPiece(p));
+            if(activePiece) drawPiece(activePiece,true);
+        }
+        function pointFromEvent(event) {
+            const rect=canvas.getBoundingClientRect();
+            return {x:(event.clientX-rect.left)*canvas.width/rect.width,y:(event.clientY-rect.top)*canvas.height/rect.height};
+        }
+        canvas.addEventListener('pointerdown',event=>{
+            const point=pointFromEvent(event);
+            for(let i=pieces.length-1;i>=0;i--) {
+                const piece=pieces[i];
+                if(piece.placed) continue;
+                if(ctx.isPointInPath(piece.path,point.x-piece.x,point.y-piece.y)) {
+                    activePiece=piece; dragOffsetX=point.x-piece.x; dragOffsetY=point.y-piece.y;
+                    pieces.splice(i,1); pieces.push(activePiece);
+                    canvas.setPointerCapture(event.pointerId); render(); event.preventDefault(); break;
+                }
+            }
+        });
+        canvas.addEventListener('pointermove',event=>{
+            if(!activePiece) return;
+            const point=pointFromEvent(event); activePiece.x=point.x-dragOffsetX; activePiece.y=point.y-dragOffsetY; render();
+        });
+        function releasePiece() {
+            if(!activePiece) return;
+            const piece=activePiece;
+            const targetX=BOARD_X+piece.col*CELL-DEPTH, targetY=BOARD_Y+piece.row*CELL-DEPTH;
+            const centerX=piece.x+PIECE_SIZE/2, centerY=piece.y+PIECE_SIZE/2;
+            const correctX=targetX+PIECE_SIZE/2, correctY=targetY+PIECE_SIZE/2;
+            if(Math.hypot(centerX-correctX,centerY-correctY)<CELL*.62) {
+                piece.x=targetX; piece.y=targetY; piece.placed=true; solvedCount++;
+                document.getElementById('status').textContent=`${solvedCount} of ${N*N} pieces placed`;
+            } else { piece.x=piece.homeX; piece.y=piece.homeY; }
+            activePiece=null; render();
+            if(solvedCount===N*N) {
+                document.getElementById('puzzle-stage').style.display='none';
+                document.getElementById('chosen-message').textContent=finalMessage;
+                document.getElementById('message-stage').style.display='block';
+            }
+        }
+        canvas.addEventListener('pointerup',releasePiece);
+        canvas.addEventListener('pointercancel',releasePiece);
+        const finalMessage="I tell you I love you so often, yet those three words still feel too small for everything you are to me. You bring warmth to my ordinary days and fill my thoughts from the moment I wake until the quiet of night. Your smile can lift my heart, and being close to you feels like finding the place where I truly belong. You are my comfort when life feels heavy, my happiness in the little moments, and the person I want beside me through every new beginning. I want to cheer for every dream you chase, hold your hand when things are difficult, and remind you that you never have to face a hard day alone. If I could begin my story again, I would still hope to find you and choose you, again and again. I thank God for bringing you into my life, and I pray I can give you as much joy, kindness, and safety as you have given my heart. Whatever tomorrow brings, I will keep choosing you, caring for you, and loving you with all that I am. You are my favorite part of every day, my home, and my forever.";
+        image.onload=()=>{buildPieces();document.getElementById('status').textContent='0 of 16 pieces placed';render();};
+        image.onerror=()=>{document.getElementById('status').textContent='The puzzle picture could not be loaded.';};
+        image.src='puzzle.jpg';
+    </script>
+</body>
+</html>

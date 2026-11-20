@@ -2,82 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Love</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #ff4d6d;
-            --accent: #d63384;
+            --accent: #c92f78;
             --bg-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            --glass: rgba(255, 255, 255, 0.28);
+            --glass: rgba(255, 255, 255, 0.42);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex; justify-content: center; align-items: center;
-            background: var(--bg-grad); overflow: hidden; padding: 20px;
+            background: radial-gradient(ellipse at 12% 16%, rgba(255,255,255,.6), transparent 34%),
+                        radial-gradient(ellipse at 88% 84%, rgba(255,255,255,.38), transparent 30%), var(--bg-grad);
+            overflow-x: hidden; overflow-y: auto; padding: 24px;
         }
         .card {
-            width: 100%; max-width: 460px;
-            background: var(--glass); backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            padding: 40px 25px; border-radius: 35px;
-            box-shadow: 0 20px 45px rgba(255, 77, 109, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 100%; max-width: 440px;
+            background: var(--glass); backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            padding: clamp(28px, 7vw, 42px) clamp(20px, 6vw, 32px);
+            border-radius: 32px;
+            box-shadow: 0 24px 60px rgba(174, 54, 100, .18), inset 0 1px 0 rgba(255,255,255,.7);
+            border: 1px solid rgba(255, 255, 255, .72);
             text-align: center; z-index: 10;
         }
-        #buttons-list { max-height: 75vh; overflow-y: auto; scrollbar-width: none; width: 100%; }
-        #buttons-list::-webkit-scrollbar { display: none; }
-        
-        .custom-button {
-            display: block; width: 100%; padding: 15px; margin-bottom: 12px;
-            background: #fff; color: var(--accent); border: 1.5px solid var(--primary);
-            border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 600;
-            text-align: center;
+        #buttons-list { width: 100%; }
+        .button-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+        .square-button {
+            aspect-ratio: 1; min-width: 0; display: flex; align-items: center; justify-content: center;
+            padding: 8px; border: 1px solid rgba(214,51,132,.22); border-radius: 18px;
+            background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(255,239,245,.92));
+            box-shadow: 0 7px 16px rgba(174,54,100,.09), inset 0 1px 0 #fff;
+            color: var(--accent); font-size: clamp(11px, 3vw, 14px); font-weight: 600;
+            line-height: 1.25; text-align: center; text-decoration: none; overflow-wrap: anywhere;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
         }
-        .custom-button:active { transform: scale(0.98); background: #ffeef2; }
-
-        #fab-container { position: fixed; bottom: 35px; right: 35px; z-index: 1000; }
+        .square-button:hover, .square-button:focus-visible {
+            transform: translateY(-3px); border-color: rgba(214,51,132,.55);
+            box-shadow: 0 12px 22px rgba(174,54,100,.16); outline: none;
+        }
+        .square-button:active { transform: scale(.97); }
+        #fab-container { position: fixed; bottom: max(28px, env(safe-area-inset-bottom)); right: max(28px, env(safe-area-inset-right)); z-index: 1000; }
         .fab-btn {
-            width: 65px; height: 65px; background: #fff; border-radius: 50%;
+            width: 62px; height: 62px; background: rgba(255,255,255,.94); border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            cursor: pointer; border: 3px solid var(--primary);
+            font-size: 28px; box-shadow: 0 12px 30px rgba(153,38,83,.2);
+            cursor: pointer; border: 2px solid rgba(255,77,109,.75); padding: 0;
+            transition: transform .2s ease, box-shadow .2s ease;
         }
+        .fab-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(153,38,83,.25); }
+        .fab-btn:focus-visible { outline: 3px solid rgba(214,51,132,.3); outline-offset: 4px; }
         .heart {
             position: fixed; bottom: -50px; pointer-events: none;
             animation: floatUp linear forwards; z-index: 1;
         }
         @keyframes floatUp { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+        @media (max-width: 480px) {
+            body { padding: 18px; }
+            .card { max-width: 400px; padding: 28px 22px; border-radius: 28px; }
+            .button-grid { gap: 9px; }
+            .square-button { border-radius: 15px; padding: 6px; }
+            #fab-container { right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); }
+            .fab-btn { width: 56px; height: 56px; font-size: 25px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+        }
     </style>
 </head>
 <body>
 
     
             <div class="card" id="buttons-list" style="background: rgba(255,255,255,0.15);">
-                <a href="yahya.html" class="custom-button">!!!!!!</a>
-                <a href="comedown.html" class="custom-button">Come Down</a>
-                <a href="love.html" class="custom-button">Love</a>
-                <a href="game.html" class="custom-button">Game</a>
-                <a href="queen.html" class="custom-button">Queen</a>
-                <a href="you.html" class="custom-button">for you</a>
-                <a href="yahya1.html" class="custom-button">Wipe the fog</a>
-                <a href="yahya2.html" class="custom-button">Why?</a>
-                <a href="yahya3.html" class="custom-button">Swipe Down </a>
-                <a href="yahya4.html" class="custom-button">asala</a>
-                <a href="yahya5.html" class="custom-button">maloktyyy</a>
-                <a href="yahya6.html" class="custom-button">Forever Us</a>
-                <a href="story.html" class="custom-button">story</a>
-                <a href="soon.html" class="custom-button">soon</a>
-                <a href="soon.html" class="custom-button">soon</a>
+<nav class="button-grid" aria-label="Pages">
+            <a class="square-button" href="yahya.html">!!!!!!</a>
+            <a class="square-button" href="comedown.html">Come Down</a>
+            <a class="square-button" href="love.html">Love</a>
+            <a class="square-button" href="game.html">Game</a>
+            <a class="square-button" href="queen.html">Queen</a>
+            <a class="square-button" href="you.html">for you</a>
+            <a class="square-button" href="yahya1.html">Wipe the fog</a>
+            <a class="square-button" href="yahya2.html">Why?</a>
+            <a class="square-button" href="yahya3.html">Swipe Down </a>
+            <a class="square-button" href="yahya4.html">asala</a>
+            <a class="square-button" href="yahya5.html">maloktyyy</a>
+            <a class="square-button" href="yahya6.html">Forever Us</a>
+            <a class="square-button" href="story.html">story</a>
+            <a class="square-button" href="soon.html">soon</a>
+            <a class="square-button" href="soon.html">soon</a>
+            <a class="square-button" href="puzzle.html">Puzzle 🧩</a>
+            </nav>
         </div>
     
 
     <!-- الوردة تعيدك لملف الكلام -->
     <div id="fab-container">
-        <div class="fab-btn" onclick="window.location.href='heart.html'">🌸</div>
+        <button type="button" class="fab-btn" aria-label="Return to heart page" onclick="window.location.href='heart.html'">🌸</button>
     </div>
 
     <script>
